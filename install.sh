@@ -4,11 +4,11 @@ if [ "$PWD" != "$HOME/.xydacshell"  ]; then
 else
     echo "Checking out awesome stuffs"
     git submodule update --init --recursive
-    
+    chmod -R go-w oh-my-zsh
     echo "Creating Backups now !!";
     # Create Backups
-    cp ~/.zshrc ~/.xydacshell/backup/.zshrc
-    cp ~/.vimrc ~/.xydacshell/backup/.vimrc
+    mv ~/.zshrc ~/.xydacshell/backup/.zshrc
+    mv ~/.vimrc ~/.xydacshell/backup/.vimrc
 
     # Copy config files
     echo "Creating Symlinks now"

@@ -1,12 +1,12 @@
-set runtimepath+=~/.xydacshell/vim_runtime
+set runtimepath+=~/.xydacshell/vimrc
 
-source ~/.xydacshell/vim_runtime/vimrcs/basic.vim
-source ~/.xydacshell/vim_runtime/vimrcs/filetypes.vim
-source ~/.xydacshell/vim_runtime/vimrcs/plugins_config.vim
-source ~/.xydacshell/vim_runtime/vimrcs/extended.vim
+source ~/.xydacshell/vimrc/vimrcs/basic.vim
+source ~/.xydacshell/vimrc/vimrcs/filetypes.vim
+source ~/.xydacshell/vimrc/vimrcs/plugins_config.vim
+source ~/.xydacshell/vimrc/vimrcs/extended.vim
 
 try
-source ~/.xydacsehll/vim_runtime/my_configs.vim
+source ~/.xydacsehll/vimrc/my_configs.vim
 catch
 endtry
 
