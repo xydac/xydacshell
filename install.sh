@@ -4,7 +4,9 @@ if [ "$PWD" != "$HOME/.xydacshell"  ]; then
 else
     echo "Checking out awesome stuffs"
     git submodule update --init --recursive
-    chmod -R go-w oh-my-zsh
+
+    chmod -R go-w /.
+
     echo "Creating Backups now !!";
     # Create Backups
     mv ~/.zshrc ~/.xydacshell/backup/.zshrc
