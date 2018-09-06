@@ -1,6 +1,7 @@
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.xydacshell/oh-my-zsh
 ZSH_CUSTOM=$HOME/.xydacshell/
+source $HOME/.xydacshell/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 ZSH_THEME='materialshell-electro'
 
