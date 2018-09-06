@@ -22,8 +22,11 @@ alias c=clear
 alias gitlog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
 
+if commandexists nnn ; then
+    alias n=nnn
+    export NNN_USE_EDITOR=1
+fi
 
-export NNN_USER_EDITOR=1
 
 
 if commandexists screenfetch ; then 
