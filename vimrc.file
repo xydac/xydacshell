@@ -1,0 +1,47 @@
+set runtimepath+=~/.xydacshell/vim_runtime
+
+source ~/.xydacshell/vim_runtime/vimrcs/basic.vim
+source ~/.xydacshell/vim_runtime/vimrcs/filetypes.vim
+source ~/.xydacshell/vim_runtime/vimrcs/plugins_config.vim
+source ~/.xydacshell/vim_runtime/vimrcs/extended.vim
+
+try
+source ~/.xydacsehll/vim_runtime/my_configs.vim
+catch
+endtry
+
+
+" Automatically start NerdTree
+autocmd vimenter * NERDTree
+" Close Vim if the only other tab open is of NerdTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" Add Toggle for NerdTree to Ctrl+N
+map <C-n> :NERDTreeToggle<CR>
+" Stop Cursor from coming to NerdTree Pane at Vim Start
+autocmd VimEnter * wincmd p
+
+" GO Specific Keymapping
+au FileType go nmap <leader>r <Plug>(go-run)
+au FileType go nmap <leader>b <Plug>(go-build)
+" Activate Mouse
+set mouse=a
+" Active Line Numbers
+set number
+" Set Autoindent on
+set autoindent
+" Open NerTree always in left
+let g:NERDTreeWinPos = "left"
+
+" Assign , as Leader
+let mapleader= ","
+
+" Assign Pane Switching Shortcuts
+map <leader><Left> :wincmd h<CR>
+map <leader><Down> :wincmd j<CR>
+map <leader><Up> :wincmd k<CR>
+map <leader><Right> :wincmd l<CR>
+
+nnoremap  <silent>   <tab>  :if &modifiable && !&readonly && &modified <CR> :write<CR> :endif<CR>:bnext<CR>
+nnoremap  <silent> <s-tab>  :if &modifiable && !&readonly && &modified <CR> :write<CR> :endif<CR>:bprevious<CR>
+
+

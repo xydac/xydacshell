@@ -1,0 +1,28 @@
+# Path to your oh-my-zsh installation.
+export ZSH=$HOME/.xydacshell/oh-my-zsh
+ZSH_CUSTOM=$HOME/.xydacshell/
+
+ZSH_THEME='materialshell-electro'
+
+plugins=(git zsh-autosuggestions)
+source $ZSH/oh-my-zsh.sh
+
+commandexists(){
+    type "$1" &> /dev/null;
+}
+switchuser(){
+    sudo su -s /usr/bin/zsh $1
+}
+
+
+
+alias c=clear
+
+export ls='ls -GFh'
+export NNN_USER_EDITOR=1
+
+
+if commandexists screenfetch ; then 
+    screenfetch
+fi
+
