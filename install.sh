@@ -2,6 +2,9 @@
 if [ "$PWD" != "$HOME/.xydacshell"  ]; then
     echo " ERROR - Please run from $HOME/.xydacshell directory.";
 else
+    echo "Checking out awesome stuffs"
+    git submodule update --init --recursive
+    
     echo "Creating Backups now !!";
     # Create Backups
     cp ~/.zshrc ~/.xydacshell/backup/.zshrc
