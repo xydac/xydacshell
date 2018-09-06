@@ -19,8 +19,10 @@ switchuser(){
 
 
 alias c=clear
+alias gitlog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+alias ls='ls -GFh'
 
-export ls='ls -GFh'
+
 export NNN_USER_EDITOR=1
 
 
