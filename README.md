@@ -12,14 +12,20 @@ Opinionated Awesome Shell with cherry picked awesomeness.
 ## Features
 A lovely and Customized terminal System that declutters your shell customzations
 
+
 ## Screenshots
 Prompt Preview
 ![Prompt Theme](https://raw.githubusercontent.com/xydac/xydacshell/master/screenshots/screenshot-prompt.png)
 VIM Preview
 ![VI](https://raw.githubusercontent.com/xydac/xydacshell/master/screenshots/screenshot-vi.png)
 ## Installation & Updates
+For Installation :
 ``` 
 git clone https://github.com/xydac/xydacshell.git  ~/.xydacshell && cd ~/.xydacshell && bash install.sh
+```
+For Update:
+```
+cd ~/.xydacshell && git pull --rebase
 ```
 
 ### ZSH Tweaks
@@ -36,5 +42,11 @@ git clone https://github.com/xydac/xydacshell.git  ~/.xydacshell && cd ~/.xydacs
 * Vim Customization : update your custom tweaks in ```~/.xydacshell/vimrc.custom```
 * ZSH Customization : update your custom tweaks in ```~/.xydacshell/zshrc.custom```
 
+## Minimum Requirement
+* zsh
+* git
 
+## License
+MIT
 
+- Pull Request Welcome

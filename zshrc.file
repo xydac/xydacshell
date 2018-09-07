@@ -9,15 +9,21 @@
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.xydacshell/oh-my-zsh
 ZSH_CUSTOM=$HOME/.xydacshell/
+
+# Source Plugin Files
 source $HOME/.xydacshell/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $HOME/.xydacshell/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $HOME/.xydacshell/k/k.sh
 
+# Set ZSH Theme
 ZSH_THEME='materialshell-electro'
+
+# Set ZSH Plugins
 
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting k )
 source $ZSH/oh-my-zsh.sh
 
+# Custom Functions
 commandexists(){
     type "$1" &> /dev/null;
 }
@@ -25,8 +31,7 @@ switchuser(){
     sudo su -s /usr/bin/zsh $1
 }
 
-
-
+# Custom Alias
 alias c=clear
 alias gitlog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
@@ -37,9 +42,8 @@ if commandexists nnn ; then
 fi
 
 
-
 if commandexists screenfetch ; then 
-    screenfetch
+    clear && screenfetch
 fi
 source $HOME/.xydacshell/zshrc.custom
 
