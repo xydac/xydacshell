@@ -18,17 +18,22 @@ Prompt Preview
 ![Prompt Theme](https://raw.githubusercontent.com/xydac/xydacshell/master/screenshots/screenshot-prompt.png)
 VIM Preview
 ![VI](https://raw.githubusercontent.com/xydac/xydacshell/master/screenshots/screenshot-vi.png)
-## Installation & Updates
-For Installation :
+
+## Installation, Updates, Uninstallation
+### Installation :
 ``` 
 git clone https://github.com/xydac/xydacshell.git  ~/.xydacshell && cd ~/.xydacshell && bash install.sh
 ```
-For Update:
+### Update:
 ```
 cd ~/.xydacshell && git pull --rebase
 ```
-
-### ZSH Tweaks
+### Uninstall
+Restores Backup 
+```
+rm ~/.zshrc ~/.vimrc && mv ~/.xydacshell/backup/.zshrc ~/.zshrc && ~/.xydacshell/backup/.vimrc ~/.vimrc
+```
+## Tweaks
 * Alias : ```c``` --> Clears Screen
 * Alias : ```gitlog``` --> One Liner Git Logs
 
