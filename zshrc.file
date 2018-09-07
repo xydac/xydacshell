@@ -3,10 +3,11 @@ export ZSH=$HOME/.xydacshell/oh-my-zsh
 ZSH_CUSTOM=$HOME/.xydacshell/
 source $HOME/.xydacshell/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $HOME/.xydacshell/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $HOME/.xydacshell/k/k.sh
 
 ZSH_THEME='materialshell-electro'
 
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting k )
 source $ZSH/oh-my-zsh.sh
 
 commandexists(){
@@ -19,6 +20,7 @@ switchuser(){
 
 
 alias c=clear
+alias k='k -ha'
 alias gitlog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
 
@@ -32,4 +34,5 @@ fi
 if commandexists screenfetch ; then 
     screenfetch
 fi
+source $home/.xydacshell/zsh.custom
 

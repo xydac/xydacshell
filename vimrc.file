@@ -5,12 +5,6 @@ source ~/.xydacshell/vimrc/vimrcs/filetypes.vim
 source ~/.xydacshell/vimrc/vimrcs/plugins_config.vim
 source ~/.xydacshell/vimrc/vimrcs/extended.vim
 
-try
-source ~/.xydacshell/vimrc/my_configs.vim
-catch
-endtry
-
-
 " Automatically start NerdTree
 autocmd vimenter * NERDTree
 " Close Vim if the only other tab open is of NerdTree
@@ -45,4 +39,5 @@ map <leader><Tab> :MRU<CR>
 nnoremap  <silent>   <tab>  :if &modifiable && !&readonly && &modified <CR> :write<CR> :endif<CR>:bnext<CR>
 nnoremap  <silent> <s-tab>  :if &modifiable && !&readonly && &modified <CR> :write<CR> :endif<CR>:bprevious<CR>
 
+source ~/.xydacshell/vimrc.custom
 
