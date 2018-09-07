@@ -12,6 +12,8 @@ Opinionated Awesome Shell with cherry picked awesomeness.
 ## Features
 A lovely and Customized terminal System that declutters your shell customzations
 
+## Screenshots
+![Prompt Theme](https://raw.githubusercontent.com/xydac/xydacshell/master/screenshots/screenshot-prompt.png)
 
 ## Installation & Updates
 ``` 
