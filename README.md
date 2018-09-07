@@ -10,7 +10,8 @@ Opinionated Awesome Shell with cherry picked awesomeness.
 * [k](https://github.com/supercrabtree/k)
 
 ## Features
-A lovely and Customized terminal System
+A lovely and Customized terminal System that declutters your shell customzations
+
 
 ## Installation & Updates
 ``` 
@@ -28,8 +29,8 @@ git clone https://github.com/xydac/xydacshell.git  ~/.xydacshell && cd ~/.xydacs
 
 
 ## Further Customization
-* Vim Customization : update your custom tweaks in ```~/.xydacshell/vim.custom```
-* ZSH Customization : update your custom tweaks in ```~/.xydacshell/zsh.custom```
+* Vim Customization : update your custom tweaks in ```~/.xydacshell/vimrc.custom```
+* ZSH Customization : update your custom tweaks in ```~/.xydacshell/zshrc.custom```
 
 
 

@@ -28,7 +28,6 @@ switchuser(){
 
 
 alias c=clear
-alias k='k -ha'
 alias gitlog="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
 
@@ -42,5 +41,5 @@ fi
 if commandexists screenfetch ; then 
     screenfetch
 fi
-source $home/.xydacshell/zshrc.custom
+source $HOME/.xydacshell/zshrc.custom
 
