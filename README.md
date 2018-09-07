@@ -14,7 +14,7 @@ A lovely and Customized terminal System
 
 ## Installation & Updates
 ``` 
-git clone https://lab.xydac.com/xydac/xydacshell.git ~/.xydacshell && cd ~/.xydacshell && bash install.sh
+git clone https://github.com/xydac/xydacshell.git  ~/.xydacshell && cd ~/.xydacshell && bash install.sh
 ```
 
 ### ZSH Tweaks

@@ -37,7 +37,7 @@ let g:NERDTreeWinPos = "left"
 " Assign , as Leader
 let mapleader= "`"
 
-" Assign Pane Switching Shortcuts
+"e Assign Pane Switching Shortcuts
 map <leader><Left> :wincmd h<CR>
 map <leader><Down> :wincmd j<CR>
 map <leader><Up> :wincmd k<CR>
@@ -46,6 +46,7 @@ map <leader><Tab> :MRU<CR>
 
 nnoremap  <silent>   <tab>  :if &modifiable && !&readonly && &modified <CR> :write<CR> :endif<CR>:bnext<CR>
 nnoremap  <silent> <s-tab>  :if &modifiable && !&readonly && &modified <CR> :write<CR> :endif<CR>:bprevious<CR>
+set nofoldenable
 
 source ~/.xydacshell/vimrc.custom
 
