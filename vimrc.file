@@ -1,3 +1,11 @@
+" """"""""""""""""""""
+" Please Donot Edit This File directly
+" For any custom Tweaks use below file
+" ~/.xydacshell/vimrc.custom
+"
+" ""
+
+
 set runtimepath+=~/.xydacshell/vimrc
 
 source ~/.xydacshell/vimrc/vimrcs/basic.vim
