@@ -14,7 +14,7 @@ A lovely and Customized terminal System that declutters your shell customzations
 
 ## Screenshots
 ![Prompt Theme](https://raw.githubusercontent.com/xydac/xydacshell/master/screenshots/screenshot-prompt.png)
-
+![VI](https://raw.githubusercontent.com/xydac/xydacshell/master/screenshots/screenshot-vi.png)
 ## Installation & Updates
 ``` 
 git clone https://github.com/xydac/xydacshell.git  ~/.xydacshell && cd ~/.xydacshell && bash install.sh
