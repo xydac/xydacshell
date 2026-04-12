@@ -163,7 +163,7 @@ case "$target_profile" in
 
     # Detect missing modern tools and offer to install them.
     # User is prompted per tool; --force accepts all; --dry-run previews without running.
-    FORCE="$FORCE" xs_modern_tools_offer starship nvim fzf zoxide eza bat
+    FORCE="$FORCE" xs_modern_tools_offer starship nvim fzf zoxide lsd bat
     ;;
 esac
 

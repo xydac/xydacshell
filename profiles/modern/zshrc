@@ -42,15 +42,11 @@ if commandexists zoxide; then
   eval "$(zoxide init zsh)"
   alias cd=z 2>/dev/null || true
 fi
-if commandexists eza; then
-  alias ls='eza --group-directories-first'
-  alias ll='eza -l --group-directories-first --git'
-  alias la='eza -la --group-directories-first --git'
-  alias tree='eza --tree'
-elif commandexists lsd; then
-  alias ls='lsd'
-  alias ll='lsd -l'
-  alias la='lsd -la'
+if commandexists lsd; then
+  alias ls='lsd --group-dirs=first'
+  alias ll='lsd -l --group-dirs=first --git'
+  alias la='lsd -la --group-dirs=first --git'
+  alias tree='lsd --tree'
 fi
 if commandexists bat; then
   alias cat='bat --paging=never'

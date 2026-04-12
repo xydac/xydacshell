@@ -3,7 +3,7 @@
 An opinionated terminal setup. Two profiles, one install script, safe to re-run.
 
 - **classic** — oh-my-zsh with the `materialshell-electro` theme, amix/vimrc, and a handful of zsh plugins. The original xydacshell stack.
-- **modern** — starship prompt, Neovim with a small `init.lua`, and graceful use of fzf / zoxide / eza / bat when they're installed.
+- **modern** — starship prompt, Neovim with a small `init.lua`, and graceful use of fzf / zoxide / lsd / bat when they're installed.
 
 Existing users: your setup still works. You stay on `classic` until you opt into `modern`.
 
@@ -51,11 +51,11 @@ The modern profile degrades gracefully when these are missing. To get the full e
 
 ```bash
 # macOS
-brew install starship neovim fzf zoxide eza bat
+brew install starship neovim fzf zoxide lsd bat
 
 # Debian/Ubuntu
 sudo apt install neovim fzf
-# For starship, zoxide, eza, bat — see each project's release page or use a user-local install.
+# For starship, zoxide, lsd, bat — see each project's release page or use a user-local install.
 ```
 
 ## Uninstall
@@ -87,7 +87,7 @@ xydacshell/
 - `zsh` required.
 - `git` required.
 - `classic` profile: submodules are used (oh-my-zsh, amix/vimrc, etc.).
-- `modern` profile: Neovim recommended; starship, fzf, zoxide, eza, bat are optional and each has a fallback.
+- `modern` profile: Neovim recommended; starship, fzf, zoxide, lsd, bat are optional and each has a fallback.
 
 ## License
 

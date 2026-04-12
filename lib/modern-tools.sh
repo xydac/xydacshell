@@ -44,8 +44,7 @@ xs_pkg_for() {
     fzf:brew|fzf:apt|fzf:dnf|fzf:pacman|fzf:apk) echo fzf ;;
     zoxide:brew|zoxide:pacman|zoxide:dnf) echo zoxide ;;
     zoxide:apt|zoxide:apk) echo "" ;;
-    eza:brew|eza:pacman|eza:dnf) echo eza ;;
-    eza:apt|eza:apk) echo "" ;;  # apt may not have it on older releases; use fallback
+    lsd:brew|lsd:apt|lsd:dnf|lsd:pacman|lsd:apk) echo lsd ;;
     bat:brew|bat:pacman|bat:dnf) echo bat ;;
     bat:apt) echo bat ;;  # on Debian the binary is called batcat — user needs to alias
     bat:apk) echo bat ;;
@@ -59,7 +58,6 @@ xs_fallback_for() {
   case "$tool" in
     starship) echo 'curl -sS https://starship.rs/install.sh | sh -s -- --yes' ;;
     zoxide)   echo 'curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh' ;;
-    eza)      echo 'cargo install eza   # requires Rust toolchain' ;;
     *)        echo "" ;;
   esac
 }
