@@ -38,6 +38,14 @@ opt.hlsearch       = true
 opt.cursorline     = true
 opt.wrap           = false
 
+-- Folding: use tree-sitter, but start with everything unfolded.
+-- zc close, zo open, za toggle, zM close-all, zR open-all.
+opt.foldmethod     = "expr"
+opt.foldexpr       = "nvim_treesitter#foldexpr()"
+opt.foldenable     = true
+opt.foldlevelstart = 99
+opt.foldlevel      = 99
+
 --------------------------------------------------------------------------------
 -- Core keymaps (leader-agnostic ergonomic moves).
 --------------------------------------------------------------------------------
@@ -137,32 +145,61 @@ require("lazy").setup({
   },
 
   -- Fuzzy finder — uses the system fzf we install in the tools batch.
+  -- Renamed keys to avoid conflicting with <leader>f (find-in-tree).
   {
     "ibhagwan/fzf-lua",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     cmd = "FzfLua",
     keys = {
-      { "<leader>ff", function() require("fzf-lua").files()      end, desc = "Find files"  },
-      { "<leader>fg", function() require("fzf-lua").live_grep()  end, desc = "Live grep"   },
-      { "<leader>fb", function() require("fzf-lua").buffers()    end, desc = "Buffers"     },
-      { "<leader>fh", function() require("fzf-lua").help_tags()  end, desc = "Help tags"   },
-      { "<leader>fr", function() require("fzf-lua").resume()     end, desc = "Resume pick" },
-      { "<leader>fk", function() require("fzf-lua").keymaps()    end, desc = "Keymaps"     },
+      { "<leader>pf", function() require("fzf-lua").files()      end, desc = "Find files"     },
+      { "<leader>pg", function() require("fzf-lua").live_grep()  end, desc = "Live grep"      },
+      { "<leader>pb", function() require("fzf-lua").buffers()    end, desc = "Buffers"        },
+      { "<leader>ph", function() require("fzf-lua").help_tags()  end, desc = "Help tags"      },
+      { "<leader>pr", function() require("fzf-lua").resume()     end, desc = "Resume pick"    },
+      { "<leader>pk", function() require("fzf-lua").keymaps()    end, desc = "Keymaps"        },
     },
     opts = {},
   },
 
-  -- File explorer — edit a directory as a buffer. Saves like any buffer.
+  -- File tree — NERDTree-style panel on the left.
+  -- Auto-opens when you run 'nvim <dir>' (classic NERDTree behavior).
+  {
+    "nvim-tree/nvim-tree.lua",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    lazy         = false,
+    keys = {
+      { "<leader>e", "<cmd>NvimTreeToggle<cr>", desc = "File tree"                 },
+      { "<C-n>",     "<cmd>NvimTreeToggle<cr>", desc = "File tree (classic bind)"  },
+      { "<leader>f", "<cmd>NvimTreeFindFile<cr>", desc = "Reveal current file"     },
+    },
+    opts = {
+      view = { width = 32, side = "left", preserve_window_proportions = true },
+      renderer = {
+        group_empty    = true,
+        indent_markers = { enable = true },
+        icons = { show = { folder_arrow = true, file = true } },
+      },
+      hijack_netrw       = true,
+      hijack_directories = { enable = true, auto_open = true },
+      actions = { open_file = { quit_on_open = false, window_picker = { enable = false } } },
+      filters = { dotfiles = false, git_ignored = false },
+      git     = { enable = true },
+      diagnostics = { enable = false },
+      update_focused_file = { enable = true, update_cwd = false },
+    },
+  },
+
+  -- Lightweight inline buffer-mode file editor as a complement. Hit '-' to
+  -- open the current dir as a buffer; great for quick renames / moves.
   {
     "stevearc/oil.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
-    lazy = false,
+    cmd = "Oil",
     keys = {
-      { "-",         "<cmd>Oil<cr>", desc = "Open parent directory" },
-      { "<leader>e", "<cmd>Oil<cr>", desc = "Open directory"        },
+      { "-", "<cmd>Oil<cr>", desc = "Open parent directory (oil)" },
     },
     opts = {
-      default_file_explorer = true,
+      default_file_explorer = false,  -- nvim-tree is primary; this is a power-user aside
       view_options = { show_hidden = true },
     },
   },
