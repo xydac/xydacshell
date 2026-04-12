@@ -25,22 +25,21 @@ dispatcher defaults to classic when no profile file is present, so your shell
 stays byte-for-byte the same. The only visible change is that the `x` command
 appears on your `PATH` in new shells.
 
-```bash
-cd ~/.xydacshell
-git stash                             # only if you've hand-edited tracked files
-git pull --rebase
-git stash pop                         # only if you stashed
-exec zsh                              # new shell picks up the x command
+One-liner:
 
-x doctor                              # report + offer to switch to modern
+```bash
+cd ~/.xydacshell && git pull --rebase --autostash && git submodule update --init --recursive && exec zsh
 ```
 
-`x doctor` detects that you're on classic, checks that the repo is clean, and
-offers to dry-run and then apply a switch to the modern profile. Say no and
-nothing changes.
+Then:
 
-From then on, `x update` handles future pulls (git pull + submodules + reinstall)
-in one step.
+```bash
+x doctor
+```
+
+`--autostash` stashes local hand-edits before the rebase and pops them after, so this works whether or not you have uncommitted changes. `x doctor` detects that you're on classic, checks that the repo is clean, and offers to dry-run and then apply a switch to the modern profile. Say no and nothing changes.
+
+From then on, `x update` handles future pulls (git pull + submodules + reinstall) in one step.
 
 The installer is idempotent — running it twice is safe. After it finishes, open a new shell. The `x` command (and its `xydacshell` alias) is on your `PATH`.
 
