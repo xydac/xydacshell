@@ -185,3 +185,116 @@ xs_modern_tools_offer() {
     xs_dim "  note: Debian/Ubuntu ships 'bat' as 'batcat'. Add to your zshrc.custom: alias bat=batcat"
   fi
 }
+
+# Detect whether any Nerd Font is installed on the system.
+xs_has_nerd_font() {
+  if xs_command_exists fc-list; then
+    fc-list 2>/dev/null | grep -qi "nerd font" && return 0
+  fi
+  if [ "$(uname -s)" = Darwin ]; then
+    ls "$HOME/Library/Fonts" /Library/Fonts 2>/dev/null | grep -qi "nerd font" && return 0
+  fi
+  return 1
+}
+
+# Offer to install a Nerd Font. lsd's file-type icons and some starship glyphs
+# require one; without it, they render as empty boxes.
+xs_modern_fonts_offer() {
+  xs_detect_pm
+
+  if xs_has_nerd_font; then
+    xs_ok "Nerd Font detected"
+    return 0
+  fi
+
+  printf '\n'
+  xs_warn "no Nerd Font detected — lsd icons and some starship glyphs won't render"
+  cat <<'EOF'
+
+pick a Nerd Font to install (or skip):
+  1) JetBrains Mono   (coding-oriented, sharp)
+  2) Meslo LGM        (popular for terminals)
+  3) Fira Code        (with ligatures)
+  4) Hack             (simple, clean)
+  s) skip
+EOF
+  local choice=""
+  if [ "${FORCE:-0}" = 1 ]; then
+    choice=1
+  elif [ "${XS_DRY_RUN:-0}" = 1 ]; then
+    choice=1
+  else
+    printf 'choice [1]: '
+    read -r choice
+  fi
+  : "${choice:=1}"
+
+  local cask name
+  case "$choice" in
+    1) cask=font-jetbrains-mono-nerd-font; name=JetBrainsMono ;;
+    2) cask=font-meslo-lg-nerd-font;        name=Meslo ;;
+    3) cask=font-fira-code-nerd-font;       name=FiraCode ;;
+    4) cask=font-hack-nerd-font;            name=Hack ;;
+    s|S) xs_dim "  skipped."; return 0 ;;
+    *) xs_warn "  invalid choice; skipping."; return 0 ;;
+  esac
+
+  case "$XS_OS" in
+    macos)
+      if ! xs_command_exists brew; then
+        xs_err "  brew required for macOS font install — skipping."
+        return 0
+      fi
+      local cmd="brew install --cask $cask"
+      xs_info "  installing: $cmd"
+      if [ "${XS_DRY_RUN:-0}" = 1 ]; then
+        xs_dim "    (dry run) would run the command above"
+      else
+        sh -c "$cmd" && xs_ok "  installed $cask" || xs_err "  font install failed"
+      fi
+      xs_dim "  → set your terminal font to '$name Nerd Font', then restart it"
+      ;;
+    linux)
+      _xs_install_nerd_font_linux "$name"
+      ;;
+    *)
+      xs_warn "  unsupported OS for auto-font install"
+      xs_dim "  see https://www.nerdfonts.com/font-downloads"
+      ;;
+  esac
+}
+
+_xs_install_nerd_font_linux() {
+  local name="$1"
+  local zip="/tmp/${name}.zip"
+  local dest="$HOME/.local/share/fonts/${name}NerdFont"
+  local url="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/${name}.zip"
+
+  xs_info "  downloading $name Nerd Font"
+  xs_dim "    $url"
+
+  if [ "${XS_DRY_RUN:-0}" = 1 ]; then
+    xs_dim "    (dry run) would download + extract + fc-cache"
+    return 0
+  fi
+
+  xs_run mkdir -p "$dest"
+  if curl -fsSL "$url" -o "$zip" 2>/dev/null; then
+    if command -v unzip >/dev/null 2>&1; then
+      unzip -oq "$zip" -d "$dest" 2>/dev/null || { xs_err "  unzip failed"; return 0; }
+    else
+      xs_err "  unzip not available; install it and retry"
+      return 0
+    fi
+    if command -v fc-cache >/dev/null 2>&1; then
+      fc-cache -f "$dest" 2>/dev/null
+    else
+      xs_warn "  fc-cache missing; fonts copied but not registered — install fontconfig"
+    fi
+    rm -f "$zip"
+    xs_ok "  installed $name Nerd Font to $dest"
+    xs_dim "  → set your terminal font to '$name Nerd Font', then restart it"
+  else
+    xs_err "  download failed; install manually from https://www.nerdfonts.com/"
+  fi
+}
