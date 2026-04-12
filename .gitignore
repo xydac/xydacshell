@@ -1,1 +1,17 @@
 backup/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+Desktop.ini
+._*
+
+# Editor cruft
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# zsh runtime
+.zcompdump*
+*.zwc

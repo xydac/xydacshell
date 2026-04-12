@@ -70,11 +70,13 @@ xs_heal() {
     fi
   done
 
-  # 3. Anything tracked still dirty is an unresolvable conflict.
+  # 3. Re-check: ignore untracked files (user cruft is their business) and
+  # ignore our own sacred / generated paths. Only modifications to tracked
+  # files are blocking.
   local dirty
-  dirty="$(git -C "$xh" status --porcelain -- ':!zshrc.custom' ':!vimrc.custom' ':!backup' ':!profile' 2>/dev/null || true)"
+  dirty="$(git -C "$xh" status --porcelain --untracked-files=no -- ':!zshrc.custom' ':!vimrc.custom' ':!backup' ':!profile' 2>/dev/null || true)"
   if [ -n "$dirty" ]; then
-    xs_err "repo has uncommitted changes we couldn't heal:"
+    xs_err "repo has uncommitted changes to tracked files we couldn't heal:"
     printf '%s\n' "$dirty" >&2
     xs_err "resolve them, then re-run."
     return 1
