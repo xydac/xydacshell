@@ -7,7 +7,7 @@
 #   bash install.sh --profile classic     pin to the classic profile
 #   bash install.sh --profile modern      switch to the modern profile
 #   bash install.sh --dry-run             preview without touching the filesystem
-#   bash install.sh --force               skip confirmation on profile switch
+#   bash install.sh --force               skip all confirmations (profile switch + tool installs)
 #   bash install.sh --help                print this help
 #
 # Safety guarantees (for existing users):
@@ -24,6 +24,8 @@ export XYDACSHELL_HOME
 
 # shellcheck source=lib/util.sh
 . "$XYDACSHELL_HOME/lib/util.sh"
+# shellcheck source=lib/modern-tools.sh
+. "$XYDACSHELL_HOME/lib/modern-tools.sh"
 
 XS_DRY_RUN=0
 REQUESTED_PROFILE=""
@@ -159,14 +161,9 @@ case "$target_profile" in
     xs_run mkdir -p "$starship_config_dir"
     xs_symlink "$XYDACSHELL_HOME/profiles/modern/starship.toml" "$starship_config_dir/starship.toml" "$backup_dir"
 
-    xs_info "checking modern-profile tools (optional, graceful fallbacks apply)"
-    for bin in starship nvim fzf zoxide eza bat; do
-      if xs_command_exists "$bin"; then
-        xs_ok "  $bin"
-      else
-        xs_warn "  $bin not installed — see README for install hints"
-      fi
-    done
+    # Detect missing modern tools and offer to install them.
+    # User is prompted per tool; --force accepts all; --dry-run previews without running.
+    FORCE="$FORCE" xs_modern_tools_offer starship nvim fzf zoxide eza bat
     ;;
 esac
 

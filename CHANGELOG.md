@@ -3,6 +3,7 @@
 ## Unreleased — upgrade-path branch
 
 ### Added
+- **Modern-profile tool installer.** The installer now detects the OS (macOS / Linux) and an available package manager (brew / apt / dnf / pacman / apk), lists missing tools (starship, nvim, fzf, zoxide, eza, bat) with their install commands, and prompts per tool. Uses the native package manager where possible; falls back to official curl installers (starship, zoxide) or `cargo install` (eza on apt) where the pm doesn't ship the package. `--force` auto-accepts; `--dry-run` previews. Missing tools degrade gracefully — the profile still works without them.
 - **Profiles.** Two installable profiles:
   - `classic` — the original oh-my-zsh + materialshell-electro + amix/vimrc stack. Default for existing users.
   - `modern` — starship prompt, Neovim with a small `init.lua`, graceful use of fzf/zoxide/eza/bat when present, no oh-my-zsh dependency.
