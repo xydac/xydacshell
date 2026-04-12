@@ -27,14 +27,23 @@ appears on your `PATH` in new shells.
 
 ```bash
 cd ~/.xydacshell
-bash adopt.sh                                                                     # safe-guards any edits you made to tracked files
-git pull --rebase --autostash && git submodule update --init --recursive && exec zsh
-x doctor                                                                          # cleanup + offer switch to modern
+git pull --rebase --autostash && exec zsh
+x switch modern   # heals any dirty state (migrates zshrc.file edits, cleans submodules), then switches
 ```
 
-- `adopt.sh` moves any hand-edits you've made to `zshrc.file` / `vimrc.file` into your `zshrc.custom` / `vimrc.custom`, then resets the tracked files. No-op on a clean repo.
-- `x doctor` detects common dirty states (submodule untracked content, leftover dispatcher edits) and offers to auto-heal each, then offers the profile switch.
-- On classic, say no and nothing changes. From then on, `x update` handles future pulls in one step.
+Or if you want to stay on classic and just heal/update:
+
+```bash
+x update
+```
+
+`x switch` and `x update` both invoke `install.sh`, which:
+- migrates any additions you made to tracked files (`zshrc.file`, `vimrc.file`) into your sacred `zshrc.custom` / `vimrc.custom`, then resets the tracked files,
+- cleans submodule untracked content (plugin caches, compiled files),
+- verifies `zshrc.custom` / `vimrc.custom` hash unchanged before and after,
+- snapshots replaced files into `backup/<timestamp>/`.
+
+`x doctor` is pure diagnostic — it reports state and points you at the right verb; it doesn't write anything.
 
 The installer is idempotent — running it twice is safe. After it finishes, open a new shell. The `x` command (and its `xydacshell` alias) is on your `PATH`.
 

@@ -59,15 +59,68 @@ if [ "$PWD" != "$XYDACSHELL_HOME" ]; then
   exit 1
 fi
 
-# Refuse to run if the user has made uncommitted changes to tracked files.
-# (Unstaged changes to tracked files = potentially custom edits to zshrc.file/vimrc.file
-# that git pull would clobber.)
+# Heal common dirty states before proceeding. Covers:
+#   - Submodule untracked content (plugin caches, .zcompdump, compiled .zwc).
+#   - User edits to tracked dispatcher files (zshrc.file / vimrc.file):
+#     additions get migrated to zshrc.custom / vimrc.custom, then the tracked
+#     file is reset.
+# After healing, any remaining dirt is a real conflict — refuse to proceed.
+_xs_migrate_additions() {
+  local tracked="$1" custom="$2"
+  local additions
+  additions="$(git -C "$XYDACSHELL_HOME" diff -- "$tracked" | awk '/^\+[^+]/ {sub(/^\+/,""); print}')"
+  [ -n "$additions" ] || { xs_dim "  $tracked has only deletions/context; leaving as-is"; return 0; }
+
+  printf '\n'
+  xs_warn "you've added content to $tracked (tracked file, not meant for edits)."
+  xs_dim "  migrating additions to $custom — your personal override file:"
+  printf '%s\n' "$additions" | sed 's/^/    /' >&2
+
+  if ! xs_prompt_yn "  migrate and reset $tracked?" y; then
+    xs_err "  $tracked still dirty; cannot proceed."
+    return 1
+  fi
+
+  if [ "${XS_DRY_RUN:-0}" = 1 ]; then
+    xs_dim "  (dry run) would append to $custom and reset $tracked"
+    return 0
+  fi
+
+  {
+    printf '\n# ---- migrated from %s on %s ----\n' "$(basename "$tracked")" "$(date -u +%Y-%m-%d)"
+    printf '%s\n' "$additions"
+  } >> "$XYDACSHELL_HOME/$custom"
+  xs_run git -C "$XYDACSHELL_HOME" checkout -- "$tracked"
+  xs_ok "  migrated $tracked → $custom"
+}
+
 if [ -d "$XYDACSHELL_HOME/.git" ]; then
+  # Submodule untracked content.
+  sm_dirty="$(git -C "$XYDACSHELL_HOME" submodule foreach --quiet 'git status --porcelain 2>/dev/null' 2>/dev/null | wc -l | tr -d ' ')"
+  if [ "${sm_dirty:-0}" -gt 0 ] 2>/dev/null; then
+    xs_warn "submodules have untracked content (plugin caches etc.)"
+    if xs_prompt_yn "  clean it?" y; then
+      xs_run git -C "$XYDACSHELL_HOME" submodule foreach --quiet 'git clean -fd .' 2>/dev/null || true
+      xs_ok "  submodules cleaned"
+    fi
+  fi
+
+  # Migrate edits to tracked dispatcher files.
+  for f in zshrc.file vimrc.file; do
+    if ! git -C "$XYDACSHELL_HOME" diff --quiet -- "$f" 2>/dev/null; then
+      case "$f" in
+        zshrc.file) _xs_migrate_additions "$f" zshrc.custom || exit 1 ;;
+        vimrc.file) _xs_migrate_additions "$f" vimrc.custom || exit 1 ;;
+      esac
+    fi
+  done
+
+  # Re-check: anything tracked still dirty is a real conflict.
   dirty="$(git -C "$XYDACSHELL_HOME" status --porcelain -- ':!zshrc.custom' ':!vimrc.custom' ':!backup' ':!profile' 2>/dev/null || true)"
   if [ -n "$dirty" ]; then
-    xs_err "xydacshell repo has uncommitted local changes:"
+    xs_err "xydacshell repo has uncommitted changes we couldn't heal:"
     printf '%s\n' "$dirty" >&2
-    xs_err "commit, stash, or discard them before re-running install.sh"
+    xs_err "resolve them, then re-run."
     exit 1
   fi
 fi
