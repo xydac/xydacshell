@@ -1,10 +1,11 @@
 # xydacshell — modern profile starship config.
-# Two-line prompt, material-ish accents that echo the classic theme's vibe.
+# Two-line prompt echoing the classic materialshell aesthetic.
+# Literal [ and ] inside textgroup text require \[ and \] escapes.
 # https://starship.rs/config/
 
 format = """
-[┌─](bold cyan)[ ](bold cyan)$username[ Ξ ](dimmed)$hostname[ Ξ ](dimmed)$directory$git_branch$git_status[ ](bold cyan)[]](bold cyan)
-[└─](bold cyan)[ ](bold cyan)$status$cmd_duration[]](bold cyan) $character"""
+[┌─\\[ ](bold cyan)$username[ Ξ ](dimmed)$hostname[ Ξ ](dimmed)$directory$git_branch$git_status[ \\]](bold cyan)
+[└─\\[ ](bold cyan)$status$cmd_duration[\\]](bold cyan) $character"""
 
 add_newline = false
 
