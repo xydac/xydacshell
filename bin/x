@@ -18,7 +18,7 @@ fi
 
 usage() {
   cat <<'EOF'
-x — xydacshell command.
+x — your terminal setup, managed.
 
 usage: x <command> [args]
 
@@ -31,9 +31,7 @@ commands
                                     restore from a timestamped backup
   storage   [--caches] [--top N] [--clean]
                                     disk usage report; --clean prompts to prune
-  uninstall                         remove xydacshell, restore legacy backups
-
-(xydacshell is a symlink to x; both work.)
+  uninstall                         remove installation, restore legacy backups
 
 global flags
   --dry-run                         preview (supported by install/update/switch/rollback/storage/uninstall)
@@ -41,6 +39,7 @@ global flags
   --help, -h                        show this message or per-command help
 
 run 'x <command> --help' for per-command help.
+(also available as `xydacshell`.)
 EOF
 }
 

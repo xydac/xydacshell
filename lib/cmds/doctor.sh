@@ -28,8 +28,8 @@ EOF
     esac
   done
 
-  printf '\n%s\n' "xydacshell doctor"
-  printf '==================\n'
+  printf '\n%s\n' "x doctor"
+  printf '=========\n'
 
   # Paths.
   printf '\npaths\n'
@@ -54,7 +54,7 @@ EOF
     if [ -L "$f" ]; then
       printf '  %-44s → %s\n' "$f" "$(readlink "$f")"
     elif [ -e "$f" ]; then
-      printf '  %-44s (regular file, not managed by xydacshell)\n' "$f"
+      printf '  %-44s (regular file, not managed by x)\n' "$f"
     fi
   done
 
