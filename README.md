@@ -1,57 +1,139 @@
+# xydacshell
 
-# Xydac Shell
-Opinionated Awesome Shell with cherry picked awesomeness.
+An opinionated terminal setup. Two profiles, one managed toolchain, safe to re-run.
 
-## Includes
-* [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
-* [vim rc](https://github.com/amix/vimrc)
-* [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
-* [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
-* [k](https://github.com/supercrabtree/k)
+![demo](vhs/demo.gif)
 
-## Features
-A lovely and Customized terminal System that declutters your shell customzations
+- **classic** — oh-my-zsh with the `materialshell-electro` theme, amix/vimrc, and a handful of zsh plugins. The original xydacshell stack.
+- **modern** — starship prompt, Neovim with a small `init.lua`, and graceful use of fzf / zoxide / lsd / bat / ncdu / dust / duf when they're installed.
 
+Existing users: your setup still works. You stay on `classic` until you opt into `modern`.
 
-## Screenshots
-Prompt Preview
-![Prompt Theme](https://raw.githubusercontent.com/xydac/xydacshell/master/screenshots/screenshot-prompt.png)
-VIM Preview
-![VI](https://raw.githubusercontent.com/xydac/xydacshell/master/screenshots/screenshot-vi.png)
+## Install
 
-## Installation, Updates, Uninstallation
-### Installation :
-``` 
-git clone https://github.com/xydac/xydacshell.git  ~/.xydacshell && cd ~/.xydacshell && bash install.sh
+```bash
+git clone --recurse-submodules https://github.com/xydac/xydacshell.git ~/.xydacshell
+cd ~/.xydacshell
+bash install.sh                       # fresh: defaults to classic
+bash install.sh --profile modern      # opt into modern
 ```
-### Update:
-```
-cd ~/.xydacshell && git pull --rebase
-```
-### Uninstall
-Restores Backup 
-```
-rm ~/.zshrc ~/.vimrc && mv ~/.xydacshell/backup/.zshrc ~/.zshrc && ~/.xydacshell/backup/.vimrc ~/.vimrc
-```
-## Tweaks
-* Alias : ```c``` --> Clears Screen
-* Alias : ```gitlog``` --> One Liner Git Logs
 
-### VI Tweaks
-* Leader Key : ``` ` ```
-* Shortcut : ``` ` + <Arrow Keys>``` --> Move Panes
-* Shortcut : ``` ` + <TAB>``` --> Recent Files
+### Upgrading from a pre-2026 install
 
+Existing classic-profile installs keep working after a `git pull`. The updated
+dispatcher defaults to classic when no profile file is present, so your shell
+stays byte-for-byte the same. The only visible change is that the `x` command
+appears on your `PATH` in new shells.
 
-## Further Customization
-* Vim Customization : update your custom tweaks in ```~/.xydacshell/vimrc.custom```
-* ZSH Customization : update your custom tweaks in ```~/.xydacshell/zshrc.custom```
+One-liner:
 
-## Minimum Requirement
-* zsh
-* git
+```bash
+cd ~/.xydacshell && git pull --rebase --autostash && git submodule update --init --recursive && exec zsh
+```
+
+Then:
+
+```bash
+x doctor
+```
+
+`--autostash` stashes local hand-edits before the rebase and pops them after, so this works whether or not you have uncommitted changes. `x doctor` detects that you're on classic, checks that the repo is clean, and offers to dry-run and then apply a switch to the modern profile. Say no and nothing changes.
+
+From then on, `x update` handles future pulls (git pull + submodules + reinstall) in one step.
+
+The installer is idempotent — running it twice is safe. After it finishes, open a new shell. The `x` command (and its `xydacshell` alias) is on your `PATH`.
+
+> **Heads-up on the name `x`:** the installer warns you if another `x` command already exists on your PATH (or via shell alias). Our `x` will take precedence in new shells. If you'd rather keep your existing `x`, use the `xydacshell` symlink instead — it's the same command.
+
+## Usage
+
+Once installed, everything runs through the `x` command (`xydacshell` is an alias):
+
+```bash
+x                          # help
+x install [--profile X]    # run the installer (same as bash install.sh)
+x update                   # git pull + submodule sync + reinstall
+x switch modern            # flip profile
+x doctor                   # diagnose current install state
+x rollback                 # restore from the most recent backup
+x storage                  # disk-usage report, per-cache cleanup prompts
+x uninstall                # remove cleanly, restore legacy backups
+```
+
+Every command supports `--dry-run` and `--force`.
+
+## Storage analytics
+
+```bash
+x storage                  # filesystems + $HOME top dirs + pkg caches
+x storage --caches         # only package-manager caches
+x storage --top 20         # more $HOME entries
+x storage --clean          # after the report, prompt per-cache to prune
+```
+
+The report covers:
+- local filesystems (via `duf` if installed, else `df -h`)
+- top directories in `$HOME` (via `dust` if installed, else `du | sort`)
+- package-manager caches: brew · npm · pnpm · cargo · pip · uv
+- docker (`docker system df`)
+- trash
+
+Clean-up runs the documented cleanup command for each cache (e.g. `brew cleanup -s`, `pnpm store prune`, `docker system prune -f`), guarded by per-cache y/n prompts. `--dry-run` previews.
+
+## Customize
+
+Edit these files — they outlive any profile switch or upgrade and are never touched by the installer.
+
+- zsh: `~/.xydacshell/zshrc.custom`
+- vim (classic): `~/.xydacshell/vimrc.custom`
+- nvim (modern): `~/.xydacshell/nvim.custom.lua`
+
+## Modern profile — optional tool install
+
+The installer detects your OS + package manager and offers to install each missing tool, one at a time. Missing tools degrade gracefully — the modern profile still works without them.
+
+```bash
+# What the installer offers on macOS:
+brew install starship neovim fzf zoxide lsd bat ncdu dust duf
+
+# On Debian/Ubuntu the installer falls back to official scripts for
+# tools apt doesn't ship (starship, zoxide, dust).
+```
+
+## Uninstall
+
+```bash
+x uninstall        # removes our symlinks, restores legacy backups
+rm -rf ~/.xydacshell        # removes the repo itself
+```
+
+## Repository layout
+
+```
+xydacshell/
+├── bin/x                                # dispatcher on your PATH
+├── bin/xydacshell                       # symlink → x
+├── install.sh                           # idempotent, profile-aware
+├── lib/
+│   ├── util.sh                          # shared shell helpers
+│   ├── modern-tools.sh                  # OS + PM detection, tool installer
+│   └── cmds/                            # one file per `xydacshell <verb>`
+├── profiles/
+│   ├── classic/ { zshrc, vimrc }        # the original setup
+│   └── modern/  { zshrc, starship.toml, nvim/init.lua }
+├── zshrc.file, vimrc.file               # dispatchers (read the profile, load config)
+├── materialshell-electro.zsh-theme      # classic prompt theme
+├── backup/                              # timestamped backups per install run
+└── .github/workflows/ci.yml             # shellcheck + zsh/nvim syntax checks
+```
+
+## Compatibility
+
+- `zsh` required.
+- `git` required.
+- `classic` profile: submodules are used (oh-my-zsh, amix/vimrc, etc.).
+- `modern` profile: Neovim recommended; starship, fzf, zoxide, lsd, bat are optional with fallbacks.
 
 ## License
-MIT
 
-- Pull Request Welcome
+MIT. Pull requests welcome.

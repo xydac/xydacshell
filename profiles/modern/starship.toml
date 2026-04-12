@@ -1,0 +1,50 @@
+# xydacshell — modern profile starship config.
+# Two-line prompt, material-ish accents that echo the classic theme's vibe.
+# https://starship.rs/config/
+
+format = """
+[┌─](bold cyan)[ ](bold cyan)$username[ Ξ ](dimmed)$hostname[ Ξ ](dimmed)$directory$git_branch$git_status[ ](bold cyan)[]](bold cyan)
+[└─](bold cyan)[ ](bold cyan)$status$cmd_duration[]](bold cyan) $character"""
+
+add_newline = false
+
+[username]
+style_user = "green"
+style_root = "red bold"
+format = "[$user]($style)"
+show_always = true
+
+[hostname]
+style = "cyan"
+format = "[$hostname]($style)"
+ssh_only = false
+
+[directory]
+style = "green"
+format = "[$path]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+symbol = " Ξ "
+style = "cyan"
+format = "[$symbol$branch]($style)"
+
+[git_status]
+style = "red"
+format = "[ $all_status$ahead_behind]($style)"
+
+[status]
+disabled = false
+symbol = "[✗](bold red)"
+success_symbol = "[✓](bold green)"
+format = "$symbol"
+
+[character]
+success_symbol = "[ॐ](bold blue)"
+error_symbol = "[ϟ](bold red)"
+
+[cmd_duration]
+min_time = 1000
+style = "yellow"
+format = " [took $duration]($style)"

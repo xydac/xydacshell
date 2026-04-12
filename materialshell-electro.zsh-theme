@@ -65,12 +65,12 @@ ZSH_THEME_GIT_PROMPT_SUFFIX=" %{$reset_color%}"
 
 ZSH_THEME_GIT_PROMPT_DIRTY=" %{$red%}✗%{$reset_color%}"
 ZSH_THEME_GIT_PROMPT_CLEAN=" %{$green%}✔%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_ADDED=" %{$green%}✚{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_MODIFIED=" %{$yellow%}⚑{$reset_color%} "
-ZSH_THEME_GIT_PROMPT_DELETED=" %{$red%}✖{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_RENAMED=" %{$blue%}▴{$reset_color% "
-ZSH_THEME_GIT_PROMPT_UNMERGED=" %{$cyan%}§{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_UNTRACKED=" %{$grey%}◒{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_ADDED=" %{$green%}✚%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_MODIFIED=" %{$yellow%}⚑%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_DELETED=" %{$red%}✖%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_RENAMED=" %{$blue%}▴%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_UNMERGED=" %{$cyan%}§%{$reset_color%}"
+ZSH_THEME_GIT_PROMPT_UNTRACKED=" %{$grey%}◒%{$reset_color%}"
 
 # Format for git_prompt_long_sha() and git_prompt_short_sha()
 ZSH_THEME_GIT_PROMPT_SHA_BEFORE="%{$cyan%} "

@@ -1,0 +1,48 @@
+name: ci
+
+on:
+  push:
+    branches: [main, master, upgrade-path]
+  pull_request:
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: false }
+      - name: Run shellcheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          severity: error
+          scandir: "./"
+          ignore_paths: |
+            oh-my-zsh
+            zsh-autosuggestions
+            zsh-syntax-highlighting
+            k
+            vimrc
+            backup
+
+  syntax-zsh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: false }
+      - name: Install zsh
+        run: sudo apt-get update && sudo apt-get install -y zsh
+      - name: Parse-check profile zshrc files
+        run: |
+          for f in profiles/classic/zshrc profiles/modern/zshrc zshrc.file; do
+            zsh -n "$f"
+          done
+
+  syntax-nvim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: false }
+      - name: Install Neovim
+        run: sudo apt-get update && sudo apt-get install -y neovim
+      - name: Load-check init.lua
+        run: nvim --headless -u profiles/modern/nvim/init.lua +qa
