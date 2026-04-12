@@ -1,47 +1,67 @@
 -- xydacshell — modern profile init.lua.
--- Small, no plugin manager, sensible defaults.
--- Preserves the classic leader key (backtick) so muscle memory carries over.
+-- Small, opinionated Neovim config. Bootstraps lazy.nvim and a curated set
+-- of plugins. On first launch, lazy.nvim clones itself and installs everything
+-- (~30 MB, takes a minute). Subsequent launches are fast.
+--
+-- User customizations go in ~/.xydacshell/nvim.custom.lua — never overwritten.
 
--- Leader: backtick (same as classic).
-vim.g.mapleader = "`"
-vim.g.maplocalleader = "`"
+--------------------------------------------------------------------------------
+-- Leader keys (set before any plugin loads so their keymaps bind correctly).
+--------------------------------------------------------------------------------
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
 
--- Basics.
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.mouse = "a"
-vim.opt.autoindent = true
-vim.opt.smartindent = true
-vim.opt.expandtab = true
-vim.opt.shiftwidth = 2
-vim.opt.tabstop = 2
-vim.opt.termguicolors = true
-vim.opt.signcolumn = "yes"
-vim.opt.splitright = true
-vim.opt.splitbelow = true
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-vim.opt.undofile = true
-vim.opt.clipboard = "unnamedplus"
-vim.opt.updatetime = 250
-vim.opt.scrolloff = 8
+--------------------------------------------------------------------------------
+-- Options.
+--------------------------------------------------------------------------------
+local opt = vim.opt
+opt.number         = true
+opt.relativenumber = true
+opt.mouse          = "a"
+opt.autoindent     = true
+opt.smartindent    = true
+opt.expandtab      = true
+opt.shiftwidth     = 2
+opt.tabstop        = 2
+opt.termguicolors  = true
+opt.signcolumn     = "yes"
+opt.splitright     = true
+opt.splitbelow     = true
+opt.ignorecase     = true
+opt.smartcase      = true
+opt.undofile       = true
+opt.clipboard      = "unnamedplus"
+opt.updatetime     = 250
+opt.scrolloff      = 8
+opt.incsearch      = true
+opt.hlsearch       = true
+opt.cursorline     = true
+opt.wrap           = false
 
--- Search ergonomics.
-vim.opt.incsearch = true
-vim.opt.hlsearch = true
-
--- Pane switching (parity with classic).
-vim.keymap.set("n", "<leader><Left>",  "<C-w>h", { silent = true })
-vim.keymap.set("n", "<leader><Down>",  "<C-w>j", { silent = true })
-vim.keymap.set("n", "<leader><Up>",    "<C-w>k", { silent = true })
-vim.keymap.set("n", "<leader><Right>", "<C-w>l", { silent = true })
-
--- Buffer navigation.
-vim.keymap.set("n", "<Tab>",   ":bnext<CR>",     { silent = true })
-vim.keymap.set("n", "<S-Tab>", ":bprevious<CR>", { silent = true })
+--------------------------------------------------------------------------------
+-- Core keymaps (leader-agnostic ergonomic moves).
+--------------------------------------------------------------------------------
+local map = vim.keymap.set
 
 -- Quick escape.
-vim.keymap.set("i", "jk", "<Esc>", { silent = true })
+map("i", "jk", "<Esc>", { silent = true, desc = "Escape insert" })
+
+-- Pane switching with Ctrl-hjkl (no leader needed).
+map("n", "<C-h>", "<C-w>h", { silent = true, desc = "Window left"  })
+map("n", "<C-j>", "<C-w>j", { silent = true, desc = "Window down"  })
+map("n", "<C-k>", "<C-w>k", { silent = true, desc = "Window up"    })
+map("n", "<C-l>", "<C-w>l", { silent = true, desc = "Window right" })
+
+-- Buffer navigation with Tab.
+map("n", "<Tab>",   ":bnext<CR>",     { silent = true, desc = "Next buffer"     })
+map("n", "<S-Tab>", ":bprevious<CR>", { silent = true, desc = "Previous buffer" })
+
+-- Clear search highlight.
+map("n", "<leader>h", ":nohlsearch<CR>", { silent = true, desc = "Clear highlight" })
+
+-- Save / quit.
+map("n", "<leader>w", ":write<CR>", { silent = true, desc = "Save" })
+map("n", "<leader>q", ":quit<CR>",  { silent = true, desc = "Quit" })
 
 -- Strip trailing whitespace on save.
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -53,7 +73,137 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   end,
 })
 
--- Source user customizations if present. Mirrors vimrc.custom from classic.
+--------------------------------------------------------------------------------
+-- Bootstrap lazy.nvim.
+--------------------------------------------------------------------------------
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  vim.fn.system({
+    "git", "clone", "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+--------------------------------------------------------------------------------
+-- Plugins.
+--------------------------------------------------------------------------------
+require("lazy").setup({
+  -- Colorscheme.
+  {
+    "folke/tokyonight.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = { style = "night" },
+    config = function(_, opts)
+      require("tokyonight").setup(opts)
+      vim.cmd.colorscheme("tokyonight")
+    end,
+  },
+
+  -- Tree-sitter: syntax, indent, folding for every language we encounter.
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    event = { "BufReadPost", "BufNewFile" },
+    opts = {
+      auto_install = true,
+      highlight    = { enable = true },
+      indent       = { enable = true },
+    },
+    config = function(_, opts)
+      require("nvim-treesitter.configs").setup(opts)
+    end,
+  },
+
+  -- Fuzzy finder — uses the system fzf we install in the tools batch.
+  {
+    "ibhagwan/fzf-lua",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    cmd = "FzfLua",
+    keys = {
+      { "<leader>ff", function() require("fzf-lua").files()      end, desc = "Find files"  },
+      { "<leader>fg", function() require("fzf-lua").live_grep()  end, desc = "Live grep"   },
+      { "<leader>fb", function() require("fzf-lua").buffers()    end, desc = "Buffers"     },
+      { "<leader>fh", function() require("fzf-lua").help_tags()  end, desc = "Help tags"   },
+      { "<leader>fr", function() require("fzf-lua").resume()     end, desc = "Resume pick" },
+      { "<leader>fk", function() require("fzf-lua").keymaps()    end, desc = "Keymaps"     },
+    },
+    opts = {},
+  },
+
+  -- File explorer — edit a directory as a buffer. Saves like any buffer.
+  {
+    "stevearc/oil.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    lazy = false,
+    keys = {
+      { "-",         "<cmd>Oil<cr>", desc = "Open parent directory" },
+      { "<leader>e", "<cmd>Oil<cr>", desc = "Open directory"        },
+    },
+    opts = {
+      default_file_explorer = true,
+      view_options = { show_hidden = true },
+    },
+  },
+
+  -- Statusline.
+  {
+    "nvim-lualine/lualine.nvim",
+    event = "VeryLazy",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    opts = {
+      options = {
+        theme                = "tokyonight",
+        component_separators = "|",
+        section_separators   = "",
+        globalstatus         = true,
+      },
+    },
+  },
+
+  -- Leader-key discovery.
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts  = { preset = "modern" },
+  },
+
+  -- Git gutter + hunks.
+  {
+    "lewis6991/gitsigns.nvim",
+    event = { "BufReadPre", "BufNewFile" },
+    opts = {
+      signs = {
+        add          = { text = "│" },
+        change       = { text = "│" },
+        delete       = { text = "_" },
+        topdelete    = { text = "‾" },
+        changedelete = { text = "~" },
+        untracked    = { text = "┆" },
+      },
+    },
+  },
+
+  -- Nerd Font icons (installed by the modern-tools font offer).
+  { "nvim-tree/nvim-web-devicons", lazy = true },
+
+  -- Brackets / quotes auto-close.
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    opts  = {},
+  },
+}, {
+  change_detection = { notify = false },
+  install          = { missing = true },
+  ui               = { border = "rounded" },
+})
+
+--------------------------------------------------------------------------------
+-- User customizations — sacred, never overwritten by the installer.
+--------------------------------------------------------------------------------
 local custom = vim.fn.expand("$HOME/.xydacshell/nvim.custom.lua")
 if vim.fn.filereadable(custom) == 1 then
   dofile(custom)
