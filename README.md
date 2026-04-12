@@ -2,6 +2,8 @@
 
 An opinionated terminal setup. Two profiles, one managed toolchain, safe to re-run.
 
+![demo](vhs/demo.gif)
+
 - **classic** — oh-my-zsh with the `materialshell-electro` theme, amix/vimrc, and a handful of zsh plugins. The original xydacshell stack.
 - **modern** — starship prompt, Neovim with a small `init.lua`, and graceful use of fzf / zoxide / lsd / bat / ncdu / dust / duf when they're installed.
 
