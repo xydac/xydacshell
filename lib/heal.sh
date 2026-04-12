@@ -3,14 +3,19 @@
 # Sourced by install.sh (preflight) and lib/cmds/update.sh (pre-pull).
 #
 # What it heals:
-#   1. Submodule untracked content (plugin caches, .zcompdump, compiled .zwc).
-#   2. User edits to tracked dispatcher files (zshrc.file, vimrc.file):
-#      additions migrate to the sacred zshrc.custom / vimrc.custom,
-#      then the tracked file is reset.
+#   - User edits to tracked dispatcher files (zshrc.file, vimrc.file):
+#     additions migrate to the sacred zshrc.custom / vimrc.custom, then the
+#     tracked file is reset.
 #
-# What it doesn't:
-#   - Deletions and in-place modifications are not migrated (can't be done
-#     safely). If those remain, we refuse to proceed.
+# What it doesn't care about:
+#   - Untracked files. Your .DS_Store / editor swap / .zcompdump cruft is your
+#     own concern; git pull won't trip on them and neither will we.
+#   - Submodule untracked content. Same logic — plugin caches inside submodules
+#     are cosmetic 'git status' noise, not a real problem.
+#
+# What it refuses:
+#   - Tracked files modified in ways we can't safely migrate (deletions,
+#     in-place edits that aren't pure additions). User has to resolve.
 #
 # Returns 0 on clean state (healed or already clean), 1 on unresolvable dirt.
 
@@ -49,18 +54,7 @@ xs_heal() {
   local xh="$XYDACSHELL_HOME"
   [ -d "$xh/.git" ] || return 0
 
-  # 1. Submodule untracked content.
-  local sm_dirty
-  sm_dirty="$(git -C "$xh" submodule foreach --quiet 'git status --porcelain 2>/dev/null' 2>/dev/null | wc -l | tr -d ' ')"
-  if [ "${sm_dirty:-0}" -gt 0 ] 2>/dev/null; then
-    xs_warn "submodules have untracked content (plugin caches etc.)"
-    if xs_prompt_yn "  clean it?" y; then
-      xs_run git -C "$xh" submodule foreach --quiet 'git clean -fd .' 2>/dev/null || true
-      xs_ok "  submodules cleaned"
-    fi
-  fi
-
-  # 2. Migrate edits to tracked dispatcher files.
+  # 1. Migrate edits to tracked dispatcher files.
   for f in zshrc.file vimrc.file; do
     if ! git -C "$xh" diff --quiet -- "$f" 2>/dev/null; then
       case "$f" in
@@ -70,11 +64,10 @@ xs_heal() {
     fi
   done
 
-  # 3. Re-check: ignore untracked files (user cruft is their business) and
-  # ignore our own sacred / generated paths. Only modifications to tracked
-  # files are blocking.
+  # 2. Refuse only if tracked files are still dirty. Untracked files are not
+  # our problem — user cruft, editor artifacts, submodule plugin caches etc.
   local dirty
-  dirty="$(git -C "$xh" status --porcelain --untracked-files=no -- ':!zshrc.custom' ':!vimrc.custom' ':!backup' ':!profile' 2>/dev/null || true)"
+  dirty="$(git -C "$xh" status --porcelain --untracked-files=no --ignore-submodules=all -- ':!zshrc.custom' ':!vimrc.custom' ':!backup' ':!profile' 2>/dev/null || true)"
   if [ -n "$dirty" ]; then
     xs_err "repo has uncommitted changes to tracked files we couldn't heal:"
     printf '%s\n' "$dirty" >&2
