@@ -90,9 +90,9 @@ if [ -z "$REQUESTED_PROFILE" ]; then
   if [ -n "$current_profile" ]; then
     target_profile="$current_profile"
   else
-    target_profile="classic"
-    xs_info "fresh install; defaulting to profile: classic"
-    xs_dim "  pass --profile modern to try the modern stack (starship + nvim)"
+    target_profile="modern"
+    xs_info "fresh install; defaulting to profile: modern"
+    xs_dim "  pass --profile classic for the legacy oh-my-zsh stack"
   fi
 else
   case "$REQUESTED_PROFILE" in

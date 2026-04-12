@@ -118,9 +118,54 @@ EOF
 
   printf '\n'
 
-  # Optional: offer a profile upgrade if conditions are right.
+  # Optional: auto-heal common issues, then offer a profile upgrade.
   if [ "$flag_no_prompt" != 1 ]; then
+    _xs_doctor_auto_heal
     _xs_doctor_maybe_offer_upgrade "$profile"
+  fi
+}
+
+# Clean up common dirty states: submodule untracked content, and user edits
+# to the tracked dispatcher files (zshrc.file / vimrc.file).
+_xs_doctor_auto_heal() {
+  local xh="$XYDACSHELL_HOME"
+  [ -d "$xh/.git" ] || return 0
+  [ -t 0 ] || return 0
+
+  # 1. Submodule untracked content (plugin caches, .zcompdump, compiled .zwc, etc.)
+  local sm_dirty
+  sm_dirty="$(git -C "$xh" submodule foreach --quiet 'git status --porcelain 2>/dev/null' 2>/dev/null | wc -l | tr -d ' ')"
+  if [ "${sm_dirty:-0}" -gt 0 ] 2>/dev/null; then
+    printf '\n'
+    xs_warn "submodules have untracked content (plugin caches etc.)"
+    if xs_prompt_yn "clean it?" y; then
+      xs_run git -C "$xh" submodule foreach --quiet 'git clean -fd .' 2>/dev/null || true
+      xs_ok "submodules cleaned"
+    fi
+  fi
+
+  # 2. Modified tracked dispatcher files — invoke adopt.sh to migrate safely.
+  local need_adopt=0
+  for f in zshrc.file vimrc.file; do
+    if ! git -C "$xh" diff --quiet -- "$f" 2>/dev/null; then
+      need_adopt=1
+      break
+    fi
+  done
+
+  if [ "$need_adopt" = 1 ]; then
+    printf '\n'
+    xs_warn "you've edited tracked dispatcher files (zshrc.file / vimrc.file)"
+    xs_dim "  these should not be edited directly. adopt.sh will move your"
+    xs_dim "  additions into zshrc.custom / vimrc.custom (which is sacred)"
+    xs_dim "  and reset the tracked files."
+    if xs_prompt_yn "run adopt.sh now?" y; then
+      if [ "${XS_DRY_RUN:-0}" = 1 ]; then
+        bash "$xh/adopt.sh" --dry-run
+      else
+        bash "$xh/adopt.sh" --yes
+      fi
+    fi
   fi
 }
 

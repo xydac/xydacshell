@@ -14,8 +14,8 @@ Existing users: your setup still works. You stay on `classic` until you opt into
 ```bash
 git clone --recurse-submodules https://github.com/xydac/xydacshell.git ~/.xydacshell
 cd ~/.xydacshell
-bash install.sh                       # fresh: defaults to classic
-bash install.sh --profile modern      # opt into modern
+bash install.sh                       # fresh: defaults to modern
+bash install.sh --profile classic     # legacy oh-my-zsh stack
 ```
 
 ### Upgrading from a pre-2026 install
@@ -25,21 +25,16 @@ dispatcher defaults to classic when no profile file is present, so your shell
 stays byte-for-byte the same. The only visible change is that the `x` command
 appears on your `PATH` in new shells.
 
-One-liner:
-
 ```bash
-cd ~/.xydacshell && git pull --rebase --autostash && git submodule update --init --recursive && exec zsh
+cd ~/.xydacshell
+bash adopt.sh                                                                     # safe-guards any edits you made to tracked files
+git pull --rebase --autostash && git submodule update --init --recursive && exec zsh
+x doctor                                                                          # cleanup + offer switch to modern
 ```
 
-Then:
-
-```bash
-x doctor
-```
-
-`--autostash` stashes local hand-edits before the rebase and pops them after, so this works whether or not you have uncommitted changes. `x doctor` detects that you're on classic, checks that the repo is clean, and offers to dry-run and then apply a switch to the modern profile. Say no and nothing changes.
-
-From then on, `x update` handles future pulls (git pull + submodules + reinstall) in one step.
+- `adopt.sh` moves any hand-edits you've made to `zshrc.file` / `vimrc.file` into your `zshrc.custom` / `vimrc.custom`, then resets the tracked files. No-op on a clean repo.
+- `x doctor` detects common dirty states (submodule untracked content, leftover dispatcher edits) and offers to auto-heal each, then offers the profile switch.
+- On classic, say no and nothing changes. From then on, `x update` handles future pulls in one step.
 
 The installer is idempotent — running it twice is safe. After it finishes, open a new shell. The `x` command (and its `xydacshell` alias) is on your `PATH`.
 
