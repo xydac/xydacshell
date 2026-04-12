@@ -154,7 +154,7 @@ case "$target_profile" in
     xs_symlink "$XYDACSHELL_HOME/profiles/modern/starship.toml" "$starship_config_dir/starship.toml" "$backup_dir"
 
     # Detect missing modern tools and offer to install them in a single batch.
-    FORCE="$FORCE" xs_modern_tools_offer starship nvim fzf zoxide lsd bat ncdu dust duf
+    FORCE="$FORCE" xs_modern_tools_offer starship nvim fzf zoxide lsd bat ncdu dust duf tree-sitter
 
     # Nerd Font offer — lsd icons and some starship glyphs need one to render.
     FORCE="$FORCE" xs_modern_fonts_offer

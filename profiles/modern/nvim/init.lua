@@ -63,12 +63,20 @@ map("n", "<leader>h", ":nohlsearch<CR>", { silent = true, desc = "Clear highligh
 map("n", "<leader>w", ":write<CR>", { silent = true, desc = "Save" })
 map("n", "<leader>q", ":quit<CR>",  { silent = true, desc = "Quit" })
 
--- Strip trailing whitespace on save.
+-- Strip trailing whitespace on save — but not for file types where trailing
+-- whitespace is semantically meaningful (Markdown's two-space hard break; Make
+-- which is tab-sensitive; diff/patch files).
+local strip_group = vim.api.nvim_create_augroup("XydacshellStripTrailing", { clear = true })
 vim.api.nvim_create_autocmd("BufWritePre", {
+  group   = strip_group,
   pattern = "*",
   callback = function()
+    local ft = vim.bo.filetype
+    if ft == "markdown" or ft == "make" or ft == "diff" or ft == "patch" then
+      return
+    end
     local save = vim.fn.winsaveview()
-    vim.cmd([[%s/\s\+$//e]])
+    vim.cmd([[silent! %s/\s\+$//e]])
     vim.fn.winrestview(save)
   end,
 })
@@ -102,16 +110,24 @@ require("lazy").setup({
     end,
   },
 
-  -- Tree-sitter: syntax, indent, folding for every language we encounter.
-  -- Pinned to `master` — the `main` branch is the in-progress v1 rewrite and
-  -- removed the `.configs` module we depend on.
+  -- Tree-sitter: syntax, indent, folding.
+  -- Pinned to `master` — the `main` branch is the in-progress v1 rewrite.
+  -- `auto_install = false` because it requires the tree-sitter CLI on PATH,
+  -- which isn't guaranteed; instead we pre-seed common parsers via
+  -- `ensure_installed`, and users can :TSInstall more on demand.
   {
     "nvim-treesitter/nvim-treesitter",
     branch = "master",
     build  = ":TSUpdate",
     event  = { "BufReadPost", "BufNewFile" },
     opts   = {
-      auto_install = true,
+      ensure_installed = {
+        "bash", "c", "lua", "vim", "vimdoc", "query", "diff", "gitcommit",
+        "python", "go", "rust", "typescript", "javascript", "tsx",
+        "json", "yaml", "toml", "markdown", "markdown_inline", "html", "css",
+      },
+      sync_install = false,
+      auto_install = false,
       highlight    = { enable = true },
       indent       = { enable = true },
     },

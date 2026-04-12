@@ -52,6 +52,9 @@ xs_pkg_for() {
     dust:brew|dust:pacman|dust:dnf) echo dust ;;
     dust:apt|dust:apk) echo "" ;;  # fallback: cargo install du-dust
     duf:brew|duf:apt|duf:dnf|duf:pacman|duf:apk) echo duf ;;
+    tree-sitter:brew) echo tree-sitter ;;
+    tree-sitter:apt|tree-sitter:dnf|tree-sitter:pacman) echo tree-sitter-cli ;;
+    tree-sitter:apk) echo "" ;;
     *) echo "" ;;
   esac
 }
