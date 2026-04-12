@@ -113,37 +113,72 @@ xs_modern_tools_offer() {
     return 0
   fi
 
+  # Bucket missing tools into (a) native PM packages and (b) fallback commands.
+  local pm_pkgs=() pm_tools=() fallback_tools=() no_recipe=()
   for t in "${missing[@]}"; do
-    local pkg cmd
+    local pkg
     pkg="$(xs_pkg_for "$t" "$XS_PM")"
     if [ -n "$pkg" ]; then
-      cmd="$(xs_install_cmd "$pkg" "$XS_PM")"
+      pm_pkgs+=("$pkg")
+      pm_tools+=("$t")
+    elif [ -n "$(xs_fallback_for "$t")" ]; then
+      fallback_tools+=("$t")
     else
-      cmd="$(xs_fallback_for "$t")"
+      no_recipe+=("$t")
     fi
+  done
 
-    if [ -z "$cmd" ]; then
-      xs_warn "  $t: no install recipe for $XS_PM on $XS_OS"
-      continue
-    fi
+  # Batch-install everything the native PM handles in one shot.
+  if [ "${#pm_pkgs[@]}" -gt 0 ]; then
+    local batch_cmd
+    case "$XS_PM" in
+      brew)    batch_cmd="brew install ${pm_pkgs[*]}" ;;
+      apt)     batch_cmd="sudo apt-get update && sudo apt-get install -y ${pm_pkgs[*]}" ;;
+      dnf)     batch_cmd="sudo dnf install -y ${pm_pkgs[*]}" ;;
+      pacman)  batch_cmd="sudo pacman -S --noconfirm ${pm_pkgs[*]}" ;;
+      apk)     batch_cmd="sudo apk add ${pm_pkgs[*]}" ;;
+    esac
 
     printf '\n'
-    xs_info "install $t?"
-    xs_dim "    will run: $cmd"
-    if xs_prompt_yn "    install $t" "n"; then
+    xs_info "install ${#pm_tools[@]} tool(s) via $XS_PM: ${pm_tools[*]}"
+    xs_dim "    $batch_cmd"
+    if xs_prompt_yn "    proceed?" "y"; then
       if [ "${XS_DRY_RUN:-0}" = 1 ]; then
-        xs_dim "    would run: $cmd"
+        xs_dim "    (dry run) would run the command above"
       else
-        if sh -c "$cmd"; then
-          xs_ok "  $t installed"
+        if sh -c "$batch_cmd"; then
+          xs_ok "  installed via $XS_PM: ${pm_tools[*]}"
         else
-          xs_err "  $t install failed (continuing — profile tolerates missing tools)"
+          xs_err "  batch install failed — try individual installs, or see each project's docs"
         fi
       fi
     else
-      xs_dim "    skipped $t"
+      xs_dim "    skipped."
     fi
-  done
+  fi
+
+  # Fallback installs: per-tool because they're all different curl/cargo scripts.
+  if [ "${#fallback_tools[@]}" -gt 0 ]; then
+    printf '\n'
+    xs_info "tools without a $XS_PM package:"
+    for t in "${fallback_tools[@]}"; do
+      local cmd
+      cmd="$(xs_fallback_for "$t")"
+      printf '\n'
+      xs_dim "  $t: $cmd"
+      if xs_prompt_yn "  install $t?" "n"; then
+        if [ "${XS_DRY_RUN:-0}" = 1 ]; then
+          xs_dim "    (dry run) would run the command above"
+        else
+          sh -c "$cmd" && xs_ok "    $t installed" || xs_err "    $t install failed"
+        fi
+      fi
+    done
+  fi
+
+  if [ "${#no_recipe[@]}" -gt 0 ]; then
+    xs_warn "no install recipe on $XS_PM for: ${no_recipe[*]}"
+  fi
 
   # Post-install note for bat on Debian/Ubuntu where the binary is `batcat`.
   if [ "$XS_PM" = apt ] && xs_command_exists batcat && ! xs_command_exists bat; then
