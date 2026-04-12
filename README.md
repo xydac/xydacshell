@@ -27,7 +27,6 @@ appears on your `PATH` in new shells.
 cd ~/.xydacshell
 git stash                             # only if you've hand-edited tracked files
 git pull --rebase
-git submodule update --init --recursive
 git stash pop                         # only if you stashed
 exec zsh                              # new shell picks up the x command
 
@@ -37,6 +36,9 @@ x doctor                              # report + offer to switch to modern
 `x doctor` detects that you're on classic, checks that the repo is clean, and
 offers to dry-run and then apply a switch to the modern profile. Say no and
 nothing changes.
+
+From then on, `x update` handles future pulls (git pull + submodules + reinstall)
+in one step.
 
 The installer is idempotent — running it twice is safe. After it finishes, open a new shell. The `x` command (and its `xydacshell` alias) is on your `PATH`.
 
