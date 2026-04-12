@@ -188,11 +188,19 @@ xs_modern_tools_offer() {
 
 # Detect whether any Nerd Font is installed on the system.
 xs_has_nerd_font() {
+  # Font names appear as both 'NerdFont' (no space, typical of filenames) and
+  # 'Nerd Font' (with space, in family names). Match either.
   if xs_command_exists fc-list; then
-    fc-list 2>/dev/null | grep -qi "nerd font" && return 0
+    fc-list 2>/dev/null | grep -qiE 'nerd.?font' && return 0
   fi
   if [ "$(uname -s)" = Darwin ]; then
-    ls "$HOME/Library/Fonts" /Library/Fonts 2>/dev/null | grep -qi "nerd font" && return 0
+    local d
+    for d in "$HOME/Library/Fonts" /Library/Fonts; do
+      [ -d "$d" ] || continue
+      if ls "$d" 2>/dev/null | grep -qiE 'nerd.?font'; then
+        return 0
+      fi
+    done
   fi
   return 1
 }
