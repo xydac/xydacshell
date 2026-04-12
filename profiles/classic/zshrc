@@ -1,4 +1,5 @@
 # xydacshell — classic profile
+# shellcheck shell=bash
 # This file mirrors the original pre-upgrade zshrc, minus the trailing
 # `source ... zshrc.custom` (the dispatcher at the repo root handles that).
 #
