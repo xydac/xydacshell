@@ -103,11 +103,14 @@ require("lazy").setup({
   },
 
   -- Tree-sitter: syntax, indent, folding for every language we encounter.
+  -- Pinned to `master` — the `main` branch is the in-progress v1 rewrite and
+  -- removed the `.configs` module we depend on.
   {
     "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-    event = { "BufReadPost", "BufNewFile" },
-    opts = {
+    branch = "master",
+    build  = ":TSUpdate",
+    event  = { "BufReadPost", "BufNewFile" },
+    opts   = {
       auto_install = true,
       highlight    = { enable = true },
       indent       = { enable = true },
