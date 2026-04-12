@@ -1,5 +1,10 @@
 backup/
 
+# user-owned, never touched by upstream
+zshrc.custom
+vimrc.custom
+nvim.custom.lua
+
 # OS cruft
 .DS_Store
 Thumbs.db

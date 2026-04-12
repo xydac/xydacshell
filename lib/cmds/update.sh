@@ -23,7 +23,7 @@ xs_cmd_update() {
   xs_heal || return 1
 
   xs_info "pulling latest"
-  xs_run git -C "$xh" pull --rebase
+  xs_run git -C "$xh" pull --rebase --autostash
 
   xs_info "syncing submodules"
   xs_run git -C "$xh" submodule update --init --recursive
