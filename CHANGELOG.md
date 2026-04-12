@@ -3,6 +3,7 @@
 ## Unreleased — upgrade-path branch
 
 ### Added
+- **`x doctor` offers profile upgrades.** When a user is on classic with a clean repo and an interactive tty, doctor prints the report and then offers to preview (`install.sh --dry-run --profile modern`) and, if accepted, apply the switch. Skippable with `--no-prompt`/`--report`. Intended as the friendly post-`git pull` entry point for existing classic users.
 - **`x` command** (with `xydacshell` as a symlink alias for discoverability). PATH-installed dispatcher (`bin/x`) with subcommands: `install`, `update`, `switch`, `doctor`, `rollback`, `storage`, `uninstall`. Both profile zshrcs prepend `$XYDACSHELL_HOME/bin` to PATH so it "just works" after install. The installer warns if another `x` is already on PATH (or may be shadowed by a shell alias).
 - **`xydacshell doctor`.** One-command diagnostic: current profile, managed symlinks, sacred custom file sizes, detected OS + package manager, modern-tool presence, most recent backup, git state.
 - **`xydacshell rollback`.** Restore files from a timestamped backup dir (most recent by default; `--stamp` to pick one). Prompts before writing; `--dry-run` previews.

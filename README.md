@@ -16,6 +16,28 @@ bash install.sh                       # fresh: defaults to classic
 bash install.sh --profile modern      # opt into modern
 ```
 
+### Upgrading from a pre-2026 install
+
+Existing classic-profile installs keep working after a `git pull`. The updated
+dispatcher defaults to classic when no profile file is present, so your shell
+stays byte-for-byte the same. The only visible change is that the `x` command
+appears on your `PATH` in new shells.
+
+```bash
+cd ~/.xydacshell
+git stash                             # only if you've hand-edited tracked files
+git pull --rebase
+git submodule update --init --recursive
+git stash pop                         # only if you stashed
+exec zsh                              # new shell picks up the x command
+
+x doctor                              # report + offer to switch to modern
+```
+
+`x doctor` detects that you're on classic, checks that the repo is clean, and
+offers to dry-run and then apply a switch to the modern profile. Say no and
+nothing changes.
+
 The installer is idempotent — running it twice is safe. After it finishes, open a new shell. The `x` command (and its `xydacshell` alias) is on your `PATH`.
 
 > **Heads-up on the name `x`:** the installer warns you if another `x` command already exists on your PATH (or via shell alias). Our `x` will take precedence in new shells. If you'd rather keep your existing `x`, use the `xydacshell` symlink instead — it's the same command.
