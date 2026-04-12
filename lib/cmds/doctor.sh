@@ -138,7 +138,7 @@ _xs_doctor_maybe_offer_upgrade() {
     dirty="$(git -C "$xh" status --porcelain 2>/dev/null | wc -l | tr -d ' ')"
     if [ "$dirty" != 0 ]; then
       xs_dim "you're on classic, with uncommitted changes in the repo."
-      xs_dim "  run 'x switch modern' to heal and switch in one step,"
+      xs_dim "  run 'x update --profile modern' to heal and switch in one step,"
       xs_dim "  or 'x update' to just heal and stay on classic."
       return 0
     fi
@@ -147,7 +147,7 @@ _xs_doctor_maybe_offer_upgrade() {
   xs_info "you're on the classic profile."
   xs_dim "  modern swaps in starship + nvim + fzf/zoxide/lsd/bat."
   xs_dim "  your zshrc.custom and vimrc.custom stay untouched."
-  xs_dim "  revertible any time with 'x switch classic'."
+  xs_dim "  revertible any time with 'x update --profile classic'."
 
   if ! xs_prompt_yn "preview a switch to modern?" "n"; then
     xs_dim "staying on classic."

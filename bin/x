@@ -23,9 +23,11 @@ x — your terminal setup, managed.
 usage: x <command> [args]
 
 commands
-  install   [flags]                 run the installer (same as bash install.sh)
-  update                            git pull + submodule sync + reinstall
-  switch    <classic|modern>        switch profile
+  install   [--profile classic|modern] [--dry-run] [--force]
+                                    run the installer (same as bash install.sh)
+  update    [--profile classic|modern] [--dry-run] [--force]
+                                    heal + pull + submodule sync + reinstall.
+                                    pass --profile to switch at the same time.
   doctor                            diagnose current install state
   rollback  [--stamp YYYYMMDDTHHMMSSZ]
                                     restore from a timestamped backup
@@ -34,7 +36,7 @@ commands
   uninstall                         remove installation, restore legacy backups
 
 global flags
-  --dry-run                         preview (supported by install/update/switch/rollback/storage/uninstall)
+  --dry-run                         preview (supported by install/update/rollback/storage/uninstall)
   --force                           auto-accept prompts
   --help, -h                        show this message or per-command help
 
@@ -47,7 +49,7 @@ cmd="${1:-help}"
 shift || true
 
 case "$cmd" in
-  install|update|switch|doctor|rollback|storage|uninstall)
+  install|update|doctor|rollback|storage|uninstall)
     src="$XYDACSHELL_HOME/lib/cmds/$cmd.sh"
     if [ ! -f "$src" ]; then
       xs_err "command file missing: $src"

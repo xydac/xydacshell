@@ -25,23 +25,29 @@ dispatcher defaults to classic when no profile file is present, so your shell
 stays byte-for-byte the same. The only visible change is that the `x` command
 appears on your `PATH` in new shells.
 
-```bash
-cd ~/.xydacshell
-git pull --rebase --autostash && exec zsh
-x switch modern   # heals any dirty state (migrates zshrc.file edits, cleans submodules), then switches
-```
-
-Or if you want to stay on classic and just heal/update:
+`x update` is the one-verb entry point. It heals any dirty state, pulls the latest, syncs submodules, and reinstalls. Pass `--profile modern` or `--profile classic` to switch profile at the same time.
 
 ```bash
+# Upgrade and switch to modern in one step:
+x update --profile modern
+
+# Or just update, staying on your current profile:
 x update
 ```
 
-`x switch` and `x update` both invoke `install.sh`, which:
-- migrates any additions you made to tracked files (`zshrc.file`, `vimrc.file`) into your sacred `zshrc.custom` / `vimrc.custom`, then resets the tracked files,
-- cleans submodule untracked content (plugin caches, compiled files),
-- verifies `zshrc.custom` / `vimrc.custom` hash unchanged before and after,
-- snapshots replaced files into `backup/<timestamp>/`.
+On a truly fresh checkout (no `x` yet), bootstrap with:
+
+```bash
+cd ~/.xydacshell
+git pull --rebase --autostash && exec zsh
+x update --profile modern
+```
+
+Under the hood, `x update` and `install.sh`:
+- migrate any additions you made to tracked files (`zshrc.file`, `vimrc.file`) into your sacred `zshrc.custom` / `vimrc.custom`, then reset the tracked files,
+- clean submodule untracked content (plugin caches, compiled files),
+- verify `zshrc.custom` / `vimrc.custom` hash unchanged before and after,
+- snapshot replaced files into `backup/<timestamp>/`.
 
 `x doctor` is pure diagnostic — it reports state and points you at the right verb; it doesn't write anything.
 
@@ -56,8 +62,7 @@ Once installed, everything runs through the `x` command (`xydacshell` is an alia
 ```bash
 x                          # help
 x install [--profile X]    # run the installer (same as bash install.sh)
-x update                   # git pull + submodule sync + reinstall
-x switch modern            # flip profile
+x update [--profile X]     # heal + pull + reinstall (pass --profile to switch)
 x doctor                   # diagnose current install state
 x rollback                 # restore from the most recent backup
 x storage                  # disk-usage report, per-cache cleanup prompts
