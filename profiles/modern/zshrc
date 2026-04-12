@@ -19,8 +19,23 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 setopt AUTO_CD INTERACTIVE_COMMENTS PROMPT_SUBST
 
-# vi-style editing feels cleaner for a "modern" profile; flip to emacs if you prefer.
 bindkey -e
+
+# Prefix-matching history navigation with Up/Down arrows.
+# Classic users expect: type 'git', press Up → last command starting with 'git'.
+# This ports that behavior without adding a new plugin.
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey '^[[A' up-line-or-beginning-search     # Up
+bindkey '^[[B' down-line-or-beginning-search   # Down
+bindkey '^P'   up-line-or-beginning-search     # Ctrl-P
+bindkey '^N'   down-line-or-beginning-search   # Ctrl-N
+
+# zsh-autosuggestions: accept the ghost-text suggestion with Right arrow / End.
+# (The plugin binds this by default, but make it explicit.)
+bindkey '^[[C' forward-char                    # Right (normal)
+bindkey '^[OC' forward-char                    # Right (alt term encoding)
 
 # Helpers — mirror classic for compat with user customizations that use them.
 commandexists(){ type "$1" &> /dev/null; }
@@ -45,8 +60,9 @@ if commandexists zoxide; then
 fi
 if commandexists lsd; then
   alias ls='lsd --group-dirs=first'
-  alias ll='lsd -l --group-dirs=first --git'
-  alias la='lsd -la --group-dirs=first --git'
+  alias ll='lsd -l --group-dirs=first --git --date=relative'
+  alias la='lsd -la --group-dirs=first --git --date=relative'
+  alias lt='lsd -l --group-dirs=first --git --date=relative --sort=time'
   alias tree='lsd --tree'
 fi
 if commandexists bat; then
