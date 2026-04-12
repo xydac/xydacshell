@@ -1,57 +1,94 @@
+# xydacshell
 
-# Xydac Shell
-Opinionated Awesome Shell with cherry picked awesomeness.
+An opinionated terminal setup. Two profiles, one install script, safe to re-run.
 
-## Includes
-* [oh-my-zsh](https://github.com/robbyrussell/oh-my-zsh)
-* [vim rc](https://github.com/amix/vimrc)
-* [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)
-* [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
-* [k](https://github.com/supercrabtree/k)
+- **classic** — oh-my-zsh with the `materialshell-electro` theme, amix/vimrc, and a handful of zsh plugins. The original xydacshell stack.
+- **modern** — starship prompt, Neovim with a small `init.lua`, and graceful use of fzf / zoxide / eza / bat when they're installed.
 
-## Features
-A lovely and Customized terminal System that declutters your shell customzations
+Existing users: your setup still works. You stay on `classic` until you opt into `modern`.
 
+## Install
 
-## Screenshots
-Prompt Preview
-![Prompt Theme](https://raw.githubusercontent.com/xydac/xydacshell/master/screenshots/screenshot-prompt.png)
-VIM Preview
-![VI](https://raw.githubusercontent.com/xydac/xydacshell/master/screenshots/screenshot-vi.png)
-
-## Installation, Updates, Uninstallation
-### Installation :
-``` 
-git clone https://github.com/xydac/xydacshell.git  ~/.xydacshell && cd ~/.xydacshell && bash install.sh
+```bash
+git clone --recurse-submodules https://github.com/xydac/xydacshell.git ~/.xydacshell
+cd ~/.xydacshell
+bash install.sh                       # fresh: defaults to classic
+bash install.sh --profile modern      # opt into modern
 ```
-### Update:
-```
-cd ~/.xydacshell && git pull --rebase
-```
-### Uninstall
-Restores Backup 
-```
-rm ~/.zshrc ~/.vimrc && mv ~/.xydacshell/backup/.zshrc ~/.zshrc && ~/.xydacshell/backup/.vimrc ~/.vimrc
-```
-## Tweaks
-* Alias : ```c``` --> Clears Screen
-* Alias : ```gitlog``` --> One Liner Git Logs
 
-### VI Tweaks
-* Leader Key : ``` ` ```
-* Shortcut : ``` ` + <Arrow Keys>``` --> Move Panes
-* Shortcut : ``` ` + <TAB>``` --> Recent Files
+The installer is idempotent — running it twice is safe.
 
+## Update
 
-## Further Customization
-* Vim Customization : update your custom tweaks in ```~/.xydacshell/vimrc.custom```
-* ZSH Customization : update your custom tweaks in ```~/.xydacshell/zshrc.custom```
+```bash
+cd ~/.xydacshell
+git pull --rebase
+git submodule update --init --recursive
+bash install.sh
+```
 
-## Minimum Requirement
-* zsh
-* git
+## Switch profile
+
+```bash
+cd ~/.xydacshell
+bash install.sh --profile modern
+# or: bash install.sh --profile classic
+```
+
+Your `~/.xydacshell/zshrc.custom` and `vimrc.custom` are never touched.
+
+## Customize
+
+Add your personal settings here — they outlive any profile switch or upgrade.
+
+- zsh: `~/.xydacshell/zshrc.custom`
+- vim (classic): `~/.xydacshell/vimrc.custom`
+- nvim (modern): `~/.xydacshell/nvim.custom.lua`
+
+## Modern profile — optional tool install hints
+
+The modern profile degrades gracefully when these are missing. To get the full experience:
+
+```bash
+# macOS
+brew install starship neovim fzf zoxide eza bat
+
+# Debian/Ubuntu
+sudo apt install neovim fzf
+# For starship, zoxide, eza, bat — see each project's release page or use a user-local install.
+```
+
+## Uninstall
+
+```bash
+# Restore the original pre-install configs if present.
+[ -f ~/.xydacshell/backup/.zshrc ] && mv ~/.xydacshell/backup/.zshrc ~/.zshrc || rm -f ~/.zshrc
+[ -f ~/.xydacshell/backup/.vimrc ] && mv ~/.xydacshell/backup/.vimrc ~/.vimrc || rm -f ~/.vimrc
+rm -rf ~/.xydacshell
+```
+
+## What ships
+
+```
+xydacshell/
+├── install.sh                           # idempotent, profile-aware, --dry-run, --force
+├── lib/util.sh                          # shell helpers
+├── zshrc.file, vimrc.file               # dispatchers (read the profile, load the right config)
+├── profiles/
+│   ├── classic/ { zshrc, vimrc }        # the original setup
+│   └── modern/  { zshrc, starship.toml, nvim/init.lua }
+├── materialshell-electro.zsh-theme      # classic prompt theme
+├── backup/                              # timestamped backups per install run
+└── .github/workflows/ci.yml             # shellcheck + zsh/nvim syntax checks
+```
+
+## Compatibility
+
+- `zsh` required.
+- `git` required.
+- `classic` profile: submodules are used (oh-my-zsh, amix/vimrc, etc.).
+- `modern` profile: Neovim recommended; starship, fzf, zoxide, eza, bat are optional and each has a fallback.
 
 ## License
-MIT
 
-- Pull Request Welcome
+MIT. Pull requests welcome.
