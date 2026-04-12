@@ -84,6 +84,29 @@ xs_symlink() {
   xs_ok "linked $dest → $src"
 }
 
+# xs_prompt_yn <question> <default>: yes/no prompt. Honors FORCE and XS_DRY_RUN.
+# Returns 0 for yes, 1 for no. --force skips ask and returns yes.
+# --dry-run also returns yes so previews show what would happen.
+xs_prompt_yn() {
+  local q="$1" default="${2:-n}"
+  if [ "${FORCE:-0}" = 1 ]; then return 0; fi
+  if [ "${XS_DRY_RUN:-0}" = 1 ]; then return 0; fi
+
+  local hint
+  case "$default" in
+    y|Y) hint="[Y/n]" ;;
+    *)   hint="[y/N]" ;;
+  esac
+
+  printf '%s %s ' "$q" "$hint"
+  read -r ans
+  : "${ans:=$default}"
+  case "$ans" in
+    y|Y|yes|YES) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
 # xs_profile_read <xhome>: echo the active profile, or "classic" if the file is missing.
 xs_profile_read() {
   local xhome="$1" file="$1/profile"

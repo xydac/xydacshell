@@ -48,6 +48,10 @@ xs_pkg_for() {
     bat:brew|bat:pacman|bat:dnf) echo bat ;;
     bat:apt) echo bat ;;  # on Debian the binary is called batcat — user needs to alias
     bat:apk) echo bat ;;
+    ncdu:brew|ncdu:apt|ncdu:dnf|ncdu:pacman|ncdu:apk) echo ncdu ;;
+    dust:brew|dust:pacman|dust:dnf) echo dust ;;
+    dust:apt|dust:apk) echo "" ;;  # fallback: cargo install du-dust
+    duf:brew|duf:apt|duf:dnf|duf:pacman|duf:apk) echo duf ;;
     *) echo "" ;;
   esac
 }
@@ -58,6 +62,7 @@ xs_fallback_for() {
   case "$tool" in
     starship) echo 'curl -sS https://starship.rs/install.sh | sh -s -- --yes' ;;
     zoxide)   echo 'curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh' ;;
+    dust)     echo 'cargo install du-dust   # requires Rust toolchain' ;;
     *)        echo "" ;;
   esac
 }
@@ -72,28 +77,6 @@ xs_install_cmd() {
     pacman)  echo "sudo pacman -S --noconfirm $pkg" ;;
     apk)     echo "sudo apk add $pkg" ;;
     *)       echo "" ;;
-  esac
-}
-
-# xs_prompt_yn <question> <default>: yes/no prompt. Honors FORCE and XS_DRY_RUN.
-# Returns 0 for yes, 1 for no.
-xs_prompt_yn() {
-  local q="$1" default="${2:-n}"
-  if [ "${FORCE:-0}" = 1 ]; then return 0; fi
-  if [ "${XS_DRY_RUN:-0}" = 1 ]; then return 0; fi  # preview-affirmative so user sees what would happen
-
-  local hint
-  case "$default" in
-    y|Y) hint="[Y/n]" ;;
-    *)   hint="[y/N]" ;;
-  esac
-
-  printf '%s %s ' "$q" "$hint"
-  read -r ans
-  : "${ans:=$default}"
-  case "$ans" in
-    y|Y|yes|YES) return 0 ;;
-    *) return 1 ;;
   esac
 }
 

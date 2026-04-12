@@ -3,6 +3,13 @@
 ## Unreleased — upgrade-path branch
 
 ### Added
+- **`xydacshell` command.** A PATH-installed dispatcher (`bin/xydacshell`) with subcommands: `install`, `update`, `switch`, `doctor`, `rollback`, `storage`, `uninstall`. Both profile zshrcs prepend `$XYDACSHELL_HOME/bin` to PATH so it "just works" after install.
+- **`xydacshell doctor`.** One-command diagnostic: current profile, managed symlinks, sacred custom file sizes, detected OS + package manager, modern-tool presence, most recent backup, git state.
+- **`xydacshell rollback`.** Restore files from a timestamped backup dir (most recent by default; `--stamp` to pick one). Prompts before writing; `--dry-run` previews.
+- **`xydacshell storage`.** Disk-usage report: local filesystems (via `duf`/`df`), top `$HOME` directories (via `dust`/`du`), package-manager caches (brew, npm, pnpm, cargo, pip, uv), docker, trash. `--caches` to focus, `--top N` to expand, `--clean` to prompt per-cache cleanup.
+- **`xydacshell uninstall`.** Removes our symlinks, restores legacy `backup/.zshrc` / `backup/.vimrc` pre-install files when present. Does not delete the repo itself.
+- **More modern tools in the installer.** `ncdu`, `dust`, `duf` added alongside starship/nvim/fzf/zoxide/lsd/bat. `dust` uses `cargo install du-dust` as fallback on apt/apk.
+- **`LICENSE` file.** Formalizes the MIT license already declared in the README.
 - **Modern-profile tool installer.** The installer now detects the OS (macOS / Linux) and an available package manager (brew / apt / dnf / pacman / apk), lists missing tools (starship, nvim, fzf, zoxide, lsd, bat) with their install commands, and prompts per tool. Uses the native package manager where possible; falls back to official curl installers (starship, zoxide) or `cargo install` (lsd on apt) where the pm doesn't ship the package. `--force` auto-accepts; `--dry-run` previews. Missing tools degrade gracefully — the profile still works without them.
 - **Profiles.** Two installable profiles:
   - `classic` — the original oh-my-zsh + materialshell-electro + amix/vimrc stack. Default for existing users.

@@ -10,6 +10,13 @@
 # sourced at the end, after the profile loads. That hasn't changed.
 
 : ${XYDACSHELL_HOME:=$HOME/.xydacshell}
+export XYDACSHELL_HOME
+
+# Put our bin/ on PATH so `xydacshell` works as a command.
+case ":$PATH:" in
+  *":$XYDACSHELL_HOME/bin:"*) ;;
+  *) export PATH="$XYDACSHELL_HOME/bin:$PATH" ;;
+esac
 
 if [ -f "$XYDACSHELL_HOME/profile" ]; then
   XYDACSHELL_PROFILE="$(cat "$XYDACSHELL_HOME/profile")"

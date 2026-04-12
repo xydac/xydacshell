@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# xydacshell — subcommand dispatcher.
+# Add $XYDACSHELL_HOME/bin to PATH (the profile zshrcs do this for you).
+
+set -euo pipefail
+
+: ${XYDACSHELL_HOME:=$HOME/.xydacshell}
+export XYDACSHELL_HOME
+
+if [ ! -f "$XYDACSHELL_HOME/lib/util.sh" ]; then
+  echo "xydacshell: cannot find $XYDACSHELL_HOME/lib/util.sh — is XYDACSHELL_HOME correct?" >&2
+  exit 1
+fi
+
+# shellcheck source=../lib/util.sh
+. "$XYDACSHELL_HOME/lib/util.sh"
+
+usage() {
+  cat <<'EOF'
+xydacshell — your terminal setup, managed.
+
+usage: xydacshell <command> [args]
+
+commands
+  install   [flags]                 run the installer (same as bash install.sh)
+  update                            git pull + submodule sync + reinstall
+  switch    <classic|modern>        switch profile
+  doctor                            diagnose current install state
+  rollback  [--stamp YYYYMMDDTHHMMSSZ]
+                                    restore from a timestamped backup
+  storage   [--caches] [--top N] [--clean]
+                                    disk usage report; --clean prompts to prune
+  uninstall                         remove xydacshell, restore legacy backups
+
+global flags
+  --dry-run                         preview (supported by install/update/switch/rollback/storage/uninstall)
+  --force                           auto-accept prompts
+  --help, -h                        show this message or per-command help
+
+run 'xydacshell <command> --help' for per-command help.
+EOF
+}
+
+cmd="${1:-help}"
+shift || true
+
+case "$cmd" in
+  install|update|switch|doctor|rollback|storage|uninstall)
+    src="$XYDACSHELL_HOME/lib/cmds/$cmd.sh"
+    if [ ! -f "$src" ]; then
+      xs_err "command file missing: $src"
+      exit 1
+    fi
+    # shellcheck source=/dev/null
+    . "$src"
+    "xs_cmd_$cmd" "$@"
+    ;;
+  help|--help|-h|"")
+    usage
+    ;;
+  *)
+    xs_err "unknown command: $cmd"
+    usage >&2
+    exit 2
+    ;;
+esac
