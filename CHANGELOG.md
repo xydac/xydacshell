@@ -3,7 +3,7 @@
 ## Unreleased — upgrade-path branch
 
 ### Added
-- **`xydacshell` command.** A PATH-installed dispatcher (`bin/xydacshell`) with subcommands: `install`, `update`, `switch`, `doctor`, `rollback`, `storage`, `uninstall`. Both profile zshrcs prepend `$XYDACSHELL_HOME/bin` to PATH so it "just works" after install.
+- **`x` command** (with `xydacshell` as a symlink alias for discoverability). PATH-installed dispatcher (`bin/x`) with subcommands: `install`, `update`, `switch`, `doctor`, `rollback`, `storage`, `uninstall`. Both profile zshrcs prepend `$XYDACSHELL_HOME/bin` to PATH so it "just works" after install. The installer warns if another `x` is already on PATH (or may be shadowed by a shell alias).
 - **`xydacshell doctor`.** One-command diagnostic: current profile, managed symlinks, sacred custom file sizes, detected OS + package manager, modern-tool presence, most recent backup, git state.
 - **`xydacshell rollback`.** Restore files from a timestamped backup dir (most recent by default; `--stamp` to pick one). Prompts before writing; `--dry-run` previews.
 - **`xydacshell storage`.** Disk-usage report: local filesystems (via `duf`/`df`), top `$HOME` directories (via `dust`/`du`), package-manager caches (brew, npm, pnpm, cargo, pip, uv), docker, trash. `--caches` to focus, `--top N` to expand, `--clean` to prompt per-cache cleanup.

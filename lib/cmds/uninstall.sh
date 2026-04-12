@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# xydacshell uninstall — remove our symlinks and restore legacy backups.
+# x uninstall — remove our symlinks and restore legacy backups.
 # Never touches the xydacshell repo itself; user deletes manually.
 
 xs_cmd_uninstall() {
@@ -11,7 +11,7 @@ xs_cmd_uninstall() {
       --force)    FORCE=1; export FORCE; shift ;;
       -h|--help)
         cat <<'EOF'
-usage: xydacshell uninstall [--dry-run] [--force]
+usage: x uninstall [--dry-run] [--force]
 
 Remove xydacshell symlinks and restore the original pre-install files
 if they're in backup/.zshrc / backup/.vimrc. Does NOT delete the

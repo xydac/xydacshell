@@ -185,6 +185,21 @@ done
 # Write the profile file last.
 xs_profile_write "$XYDACSHELL_HOME" "$target_profile"
 
+# Warn if another `x` is on PATH that isn't ours — it may shadow xydacshell's
+# command in scripts or non-interactive shells. Aliases in zsh override PATH
+# for interactive shells, so also prompt the user to check.
+existing_x="$(type -ap x 2>/dev/null | grep -v "^${XYDACSHELL_HOME}/bin/x\$" || true)"
+if [ -n "$existing_x" ]; then
+  xs_warn "another 'x' command is on your PATH:"
+  printf '%s\n' "$existing_x" | sed 's/^/    /' >&2
+  xs_dim "  after this install, xydacshell's 'x' will take precedence in new"
+  xs_dim "  shells because \$XYDACSHELL_HOME/bin is prepended to PATH."
+  xs_dim "  also check for shell aliases that would shadow it:"
+  xs_dim "    alias | grep '^x='"
+  xs_dim "  if you want to keep your existing 'x', use 'xydacshell' instead"
+  xs_dim "  (it's a symlink to the same command)."
+fi
+
 # Verify sacred files are unchanged.
 if [ "$XS_DRY_RUN" != "1" ]; then
   post_zshrc_custom="$(snapshot_hash "$XYDACSHELL_HOME/zshrc.custom")"

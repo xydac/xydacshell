@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# xydacshell doctor — report current install state.
+# x doctor — report current install state.
 
 xs_cmd_doctor() {
   local xh="$XYDACSHELL_HOME"

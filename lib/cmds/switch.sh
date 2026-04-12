@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# xydacshell switch <profile> — shorthand for install --profile <profile>.
+# x switch <profile> — shorthand for install --profile <profile>.
 
 xs_cmd_switch() {
   local profile="${1:-}"
@@ -7,7 +7,7 @@ xs_cmd_switch() {
     classic|modern) ;;
     -h|--help|"")
       cat <<'EOF'
-usage: xydacshell switch <classic|modern> [--dry-run] [--force]
+usage: x switch <classic|modern> [--dry-run] [--force]
 
 Switches the active xydacshell profile. Equivalent to:
   bash install.sh --profile <profile>

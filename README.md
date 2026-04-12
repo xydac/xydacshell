@@ -16,21 +16,23 @@ bash install.sh                       # fresh: defaults to classic
 bash install.sh --profile modern      # opt into modern
 ```
 
-The installer is idempotent — running it twice is safe. After it finishes, open a new shell. The `xydacshell` command is on your `PATH`.
+The installer is idempotent — running it twice is safe. After it finishes, open a new shell. The `x` command (and its `xydacshell` alias) is on your `PATH`.
+
+> **Heads-up on the name `x`:** the installer warns you if another `x` command already exists on your PATH (or via shell alias). Our `x` will take precedence in new shells. If you'd rather keep your existing `x`, use the `xydacshell` symlink instead — it's the same command.
 
 ## Usage
 
-Once installed, everything runs through the `xydacshell` command:
+Once installed, everything runs through the `x` command (`xydacshell` is an alias):
 
 ```bash
-xydacshell                          # help
-xydacshell install [--profile X]    # run the installer (same as bash install.sh)
-xydacshell update                   # git pull + submodule sync + reinstall
-xydacshell switch modern            # flip profile
-xydacshell doctor                   # diagnose current install state
-xydacshell rollback                 # restore from the most recent backup
-xydacshell storage                  # disk-usage report, per-cache cleanup prompts
-xydacshell uninstall                # remove cleanly, restore legacy backups
+x                          # help
+x install [--profile X]    # run the installer (same as bash install.sh)
+x update                   # git pull + submodule sync + reinstall
+x switch modern            # flip profile
+x doctor                   # diagnose current install state
+x rollback                 # restore from the most recent backup
+x storage                  # disk-usage report, per-cache cleanup prompts
+x uninstall                # remove cleanly, restore legacy backups
 ```
 
 Every command supports `--dry-run` and `--force`.
@@ -38,10 +40,10 @@ Every command supports `--dry-run` and `--force`.
 ## Storage analytics
 
 ```bash
-xydacshell storage                  # filesystems + $HOME top dirs + pkg caches
-xydacshell storage --caches         # only package-manager caches
-xydacshell storage --top 20         # more $HOME entries
-xydacshell storage --clean          # after the report, prompt per-cache to prune
+x storage                  # filesystems + $HOME top dirs + pkg caches
+x storage --caches         # only package-manager caches
+x storage --top 20         # more $HOME entries
+x storage --clean          # after the report, prompt per-cache to prune
 ```
 
 The report covers:
@@ -76,7 +78,7 @@ brew install starship neovim fzf zoxide lsd bat ncdu dust duf
 ## Uninstall
 
 ```bash
-xydacshell uninstall        # removes our symlinks, restores legacy backups
+x uninstall        # removes our symlinks, restores legacy backups
 rm -rf ~/.xydacshell        # removes the repo itself
 ```
 
@@ -84,7 +86,8 @@ rm -rf ~/.xydacshell        # removes the repo itself
 
 ```
 xydacshell/
-├── bin/xydacshell                       # dispatcher on your PATH
+├── bin/x                                # dispatcher on your PATH
+├── bin/xydacshell                       # symlink → x
 ├── install.sh                           # idempotent, profile-aware
 ├── lib/
 │   ├── util.sh                          # shared shell helpers

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# xydacshell update — git pull + submodule sync + reinstall.
+# x update — git pull + submodule sync + reinstall.
 
 xs_cmd_update() {
   local xh="$XYDACSHELL_HOME"

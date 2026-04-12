@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# xydacshell rollback — restore files from a timestamped backup.
+# x rollback — restore files from a timestamped backup.
 
 xs_cmd_rollback() {
   local xh="$XYDACSHELL_HOME"
@@ -13,7 +13,7 @@ xs_cmd_rollback() {
       --force)    FORCE=1; export FORCE; shift ;;
       -h|--help)
         cat <<'EOF'
-usage: xydacshell rollback [--stamp YYYYMMDDTHHMMSSZ] [--dry-run] [--force]
+usage: x rollback [--stamp YYYYMMDDTHHMMSSZ] [--dry-run] [--force]
 
 Restore files from a timestamped backup created by install.sh. If no
 --stamp is given, the most recent backup is used. Prompts before writing.

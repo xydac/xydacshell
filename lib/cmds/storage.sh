@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# xydacshell storage — disk-usage report with optional cleanup prompts.
+# x storage — disk-usage report with optional cleanup prompts.
 
 xs_cmd_storage() {
   local flag_caches_only=0 flag_clean=0 top=10
@@ -14,7 +14,7 @@ xs_cmd_storage() {
       --force)     FORCE=1; export FORCE; shift ;;
       -h|--help)
         cat <<'EOF'
-usage: xydacshell storage [--caches] [--top N] [--clean] [--dry-run] [--force]
+usage: x storage [--caches] [--top N] [--clean] [--dry-run] [--force]
 
 Disk-usage report covering filesystems, $HOME top directories, package-manager
 caches, containers, and trash.
