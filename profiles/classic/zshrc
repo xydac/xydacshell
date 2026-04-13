@@ -35,6 +35,7 @@ if commandexists nnn; then
     export NNN_USE_EDITOR=1
 fi
 
-if commandexists screenfetch; then
-    clear && screenfetch
+# screenfetch was discontinued; use fastfetch instead if you want a system banner.
+if commandexists fastfetch; then
+    clear && fastfetch
 fi

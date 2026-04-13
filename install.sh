@@ -73,8 +73,13 @@ is_existing_install() {
 
 current_profile=""
 if is_existing_install; then
-  current_profile="$(xs_profile_read "$XYDACSHELL_HOME")"
-  xs_info "detected existing install; current profile: $current_profile"
+  if [ -f "$XYDACSHELL_HOME/profile" ]; then
+    current_profile="$(cat "$XYDACSHELL_HOME/profile")"
+    xs_info "detected existing install; current profile: $current_profile"
+  else
+    xs_info "detected existing install without a profile file"
+    xs_dim "  defaulting to modern since no explicit choice is recorded"
+  fi
 fi
 
 # Choose target profile.
@@ -83,7 +88,7 @@ if [ -z "$REQUESTED_PROFILE" ]; then
     target_profile="$current_profile"
   else
     target_profile="modern"
-    xs_info "fresh install; defaulting to profile: modern"
+    xs_info "defaulting to profile: modern"
     xs_dim "  pass --profile classic for the legacy oh-my-zsh stack"
   fi
 else

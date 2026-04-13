@@ -24,8 +24,10 @@ _xs_heal_migrate_additions() {
   local additions
   additions="$(git -C "$xh" diff -- "$tracked" | awk '/^\+[^+]/ {sub(/^\+/,""); print}')"
 
+  # No meaningful additions — just whitespace/line-endings/deletions. Reset silently.
   if [ -z "$additions" ]; then
-    xs_dim "  $tracked has only deletions/context changes; leaving as-is"
+    xs_dim "  $tracked has no useful additions; resetting silently"
+    xs_run git -C "$xh" checkout -- "$tracked"
     return 0
   fi
 
@@ -34,7 +36,12 @@ _xs_heal_migrate_additions() {
   printf '%s\n' "$additions" | sed 's/^/    /' >&2
 
   if ! xs_prompt_yn "  migrate these additions to $custom and reset $tracked?" y; then
-    return 1
+    # User declined — reset anyway since the file cannot stay dirty across a pull.
+    # Their content is still visible in the message above; warn clearly.
+    xs_warn "  declined — resetting $tracked (the additions shown above are lost)"
+    xs_warn "  if you need to keep them, cancel now (Ctrl-C) and copy them to $custom manually"
+    xs_run git -C "$xh" checkout -- "$tracked"
+    return 0
   fi
 
   if [ "${XS_DRY_RUN:-0}" = 1 ]; then

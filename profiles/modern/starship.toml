@@ -5,7 +5,7 @@
 
 format = """
 [┌─\\[ ](bold cyan)$username[ Ξ ](dimmed)$hostname[ Ξ ](dimmed)$directory$git_branch$git_status[ \\]](bold cyan)
-[└─\\[ ](bold cyan)$status$cmd_duration[\\]](bold cyan) $character"""
+[└─\\[ ](bold cyan)$status$cmd_duration[ \\]](bold cyan) $character """
 
 add_newline = false
 
@@ -42,8 +42,8 @@ success_symbol = "[✓](bold green)"
 format = "$symbol"
 
 [character]
-success_symbol = "[ॐ](bold blue)"
-error_symbol = "[ϟ](bold red)"
+success_symbol = "[ॐ ](bold blue)"
+error_symbol   = "[ϟ ](bold red)"
 
 [cmd_duration]
 min_time = 1000
