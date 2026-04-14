@@ -21,21 +21,30 @@ setopt AUTO_CD INTERACTIVE_COMMENTS PROMPT_SUBST
 
 bindkey -e
 
-# Prefix-matching history navigation with Up/Down arrows.
-# Classic users expect: type 'git', press Up → last command starting with 'git'.
-# This ports that behavior without adding a new plugin.
+# Prefix-matching history navigation with Up/Down.
+# Type `ssh` then Up → cycles past commands starting with `ssh`.
+# Ports oh-my-zsh's default behavior without needing OMZ.
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
-bindkey '^[[A' up-line-or-beginning-search     # Up
-bindkey '^[[B' down-line-or-beginning-search   # Down
-bindkey '^P'   up-line-or-beginning-search     # Ctrl-P
-bindkey '^N'   down-line-or-beginning-search   # Ctrl-N
 
-# zsh-autosuggestions: accept the ghost-text suggestion with Right arrow / End.
-# (The plugin binds this by default, but make it explicit.)
-bindkey '^[[C' forward-char                    # Right (normal)
-bindkey '^[OC' forward-char                    # Right (alt term encoding)
+# Bind both the standard (^[[A/B) and application-mode (^[OA/B) escape
+# sequences — terminals like iTerm2 / Terminal.app / Ghostty send different
+# codes depending on their "application cursor keys" setting.
+for _k in '^[[A' '^[OA'; do bindkey "$_k" up-line-or-beginning-search;   done
+for _k in '^[[B' '^[OB'; do bindkey "$_k" down-line-or-beginning-search; done
+bindkey '^P' up-line-or-beginning-search     # Ctrl-P
+bindkey '^N' down-line-or-beginning-search   # Ctrl-N
+unset _k
+
+# Right-arrow / End accept the current autosuggestion ghost text.
+bindkey '^[[C' forward-char
+bindkey '^[OC' forward-char
+
+# Tell zsh-autosuggestions that our custom history widgets should clear the
+# ghost text when invoked (otherwise the suggestion can stick as you cycle).
+typeset -ga ZSH_AUTOSUGGEST_CLEAR_WIDGETS
+ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(up-line-or-beginning-search down-line-or-beginning-search)
 
 # Helpers — mirror classic for compat with user customizations that use them.
 commandexists(){ type "$1" &> /dev/null; }
