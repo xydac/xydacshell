@@ -183,10 +183,8 @@ xs_modern_tools_offer() {
     xs_warn "no install recipe on $XS_PM for: ${no_recipe[*]}"
   fi
 
-  # Post-install note for bat on Debian/Ubuntu where the binary is `batcat`.
-  if [ "$XS_PM" = apt ] && xs_command_exists batcat && ! xs_command_exists bat; then
-    xs_dim "  note: Debian/Ubuntu ships 'bat' as 'batcat'. Add to your zshrc.custom: alias bat=batcat"
-  fi
+  # The Debian/Ubuntu batcat → bat alias is handled automatically in the
+  # modern profile zshrc; no note needed.
 }
 
 # Detect whether any Nerd Font is installed on the system.

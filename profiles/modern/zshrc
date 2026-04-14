@@ -84,6 +84,10 @@ if commandexists lsd; then
 fi
 if commandexists bat; then
   alias cat='bat --paging=never'
+elif commandexists batcat; then
+  # Debian/Ubuntu ship bat as `batcat` to avoid a name clash with another tool.
+  alias bat='batcat'
+  alias cat='batcat --paging=never'
 fi
 if commandexists fzf; then
   # Load key-bindings and completion from either brew or apt layouts.
