@@ -1,5 +1,6 @@
 # xydacshell — modern profile starship config.
-# Two-line prompt echoing the classic materialshell aesthetic.
+# Two-line prompt echoing the classic materialshell aesthetic, but using
+# Nerd Font glyphs (assumes a Nerd Font is your terminal's font).
 # Literal [ and ] inside textgroup text require \[ and \] escapes.
 # https://starship.rs/config/
 
@@ -12,34 +13,47 @@ add_newline = false
 [username]
 style_user = "green"
 style_root = "red bold"
-format = "[$user]($style)"
+format     = "[$user]($style)"
 show_always = true
 
 [hostname]
-style = "cyan"
-format = "[$hostname]($style)"
-ssh_only = false
+style     = "cyan"
+format    = "[$hostname]($style)"
+ssh_only  = false
 
 [directory]
-style = "green"
-format = "[$path]($style)"
-truncation_length = 3
-truncation_symbol = "…/"
+style              = "green"
+format             = "[  $path]($style)"  # nf-fa-folder
+truncation_length  = 3
+truncation_symbol  = "…/"
+read_only          = " "                    # nf-fa-lock
+read_only_style    = "red"
 
 [git_branch]
-symbol = " Ξ "
-style = "cyan"
-format = "[$symbol$branch]($style)"
+# Nerd Font git branch symbol (\ue0a0). Leading space separates it from directory.
+symbol  = "  "
+style   = "purple"
+format  = "[$symbol$branch]($style)"
 
 [git_status]
-style = "red"
-format = "[ $all_status$ahead_behind]($style)"
+style              = "red"
+format             = "[ $all_status$ahead_behind]($style)"
+conflicted         = " "
+ahead              = "⇡${count}"
+behind             = "⇣${count}"
+diverged           = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked          = " ?${count}"
+stashed            = " ≡"
+modified           = " !${count}"
+staged             = " +${count}"
+renamed            = " »${count}"
+deleted            = " ✘${count}"
 
 [status]
-disabled = false
-symbol = "[✗](bold red)"
+disabled       = false
+symbol         = "[✗](bold red)"
 success_symbol = "[✓](bold green)"
-format = "$symbol"
+format         = "$symbol"
 
 [character]
 success_symbol = "[ॐ ](bold blue)"
@@ -47,5 +61,5 @@ error_symbol   = "[ϟ ](bold red)"
 
 [cmd_duration]
 min_time = 1000
-style = "yellow"
-format = " [took $duration]($style)"
+style    = "yellow"
+format   = " [took $duration]($style)"
