@@ -48,6 +48,20 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+# Ensure common binary locations are on PATH so we can detect tools that are
+# installed but live outside the installer shell's inherited PATH. Without
+# this, brew tools at /opt/homebrew/bin are reported "missing" even when
+# they're installed and working in the user's interactive shell.
+for _p in /opt/homebrew/bin /opt/homebrew/sbin /usr/local/bin /usr/local/sbin \
+          "$HOME/.local/bin" "$HOME/.cargo/bin" "$HOME/.nix-profile/bin"; do
+  case ":$PATH:" in
+    *":$_p:"*) ;;
+    *) [ -d "$_p" ] && PATH="$_p:$PATH" ;;
+  esac
+done
+unset _p
+export PATH
+
 # Preflight checks.
 for bin in git zsh; do
   if ! xs_command_exists "$bin"; then
@@ -116,9 +130,11 @@ fi
 xs_info "installing profile: $target_profile"
 [ "$XS_DRY_RUN" = "1" ] && xs_warn "DRY RUN — no filesystem changes will be made"
 
-# Update submodules (classic depends on them; modern ignores them).
-if [ "$target_profile" = "classic" ]; then
-  xs_info "syncing classic-profile submodules"
+# Sync submodules. Both profiles source zsh-autosuggestions and
+# zsh-syntax-highlighting from submodule paths; classic additionally uses
+# oh-my-zsh, amix/vimrc, and k.
+if [ -d "$XYDACSHELL_HOME/.git" ]; then
+  xs_info "syncing submodules (zsh-autosuggestions, zsh-syntax-highlighting, …)"
   xs_run git -C "$XYDACSHELL_HOME" submodule update --init --recursive
 fi
 

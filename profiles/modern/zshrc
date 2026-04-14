@@ -40,11 +40,19 @@ bindkey '^[OC' forward-char                    # Right (alt term encoding)
 # Helpers — mirror classic for compat with user customizations that use them.
 commandexists(){ type "$1" &> /dev/null; }
 
-# Plugin sourcing. We still use the submodules (same assets as classic).
-[ -f "$XYDACSHELL_HOME/zsh-autosuggestions/zsh-autosuggestions.zsh" ] && \
+# zsh-autosuggestions: ghost-text completion from history. Accept with → or ^E.
+# Sourced from the submodule we share with classic.
+if [ -f "$XYDACSHELL_HOME/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
   source "$XYDACSHELL_HOME/zsh-autosuggestions/zsh-autosuggestions.zsh"
-[ -f "$XYDACSHELL_HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && \
+  ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'
+fi
+
+# zsh-syntax-highlighting. MUST be sourced after autosuggestions and
+# near the end of the file; this is the plugin's own recommendation.
+if [ -f "$XYDACSHELL_HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
   source "$XYDACSHELL_HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
 
 # Prompt: starship when available, a quiet fallback when not.
 if commandexists starship; then
